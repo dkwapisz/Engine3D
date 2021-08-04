@@ -84,8 +84,8 @@ public class Game extends JFrame implements Runnable {
                 screen.update(camera, pixels);
                 camera.update(map);
                 delta--;
-                view2D.repaint();
             }
+            view2D.repaint();
             render();
         }
     }
