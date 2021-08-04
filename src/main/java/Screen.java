@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.awt.Color;
 
 public class Screen {
-    public int[][] map;
-    public int mapWidth, mapHeight, width, height;
-    public ArrayList<Textures> textures;
+    private int[][] map;
+    private int mapWidth, mapHeight, width, height;
+    private ArrayList<Textures> textures;
 
     public Screen(int[][] map, int mapWidth, int mapHeight, ArrayList<Textures> textures, int width, int height) {
         this.map = map;

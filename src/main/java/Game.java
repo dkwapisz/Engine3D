@@ -29,8 +29,7 @@ public class Game extends JFrame implements Runnable {
         textures.add(Textures.basicWall);
         camera = new Camera(4.5, 4.5, 1, 0, 0, -0.66);
         screen = new Screen(map, mapWidth, mapHeight, textures, 1280, 720);
-        view2D = new View2D(map, camera);
-        camera.setRefreshing(view2D);
+        view2D = new View2D(map, camera, screen);
         addKeyListener(camera);
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

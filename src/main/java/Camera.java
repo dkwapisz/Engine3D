@@ -8,7 +8,6 @@ public class Camera implements KeyListener {
     private boolean left, right, forward, backward, rotLeft, rotRight;
     private final double MOVE_SPEED = .04;
     private final double ROTATION_SPEED = .045;
-    private View2D view2D;
 
     public Camera(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
         this.posX = posX;
@@ -153,9 +152,5 @@ public class Camera implements KeyListener {
     }
     public double getROTATION_SPEED() {
         return ROTATION_SPEED;
-    }
-
-    public void setRefreshing(View2D view2D) {
-        this.view2D = view2D;
     }
 }
