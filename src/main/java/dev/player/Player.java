@@ -1,74 +1,30 @@
+package dev.player;
+
+import dev.View2D;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 
-public class PlayerHandling implements KeyListener {
+public class Player {
 
     private double posX, posY, dirX, dirY, planeX, planeY;
-    private boolean left, right, forward, backward, rotLeft, rotRight;
+    private final Controls controls;
     private final double MOVE_SPEED = 0.04;
     private final double ROTATION_SPEED = 0.045;
 
-    public PlayerHandling(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
+    public Player(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
         this.posX = posX;
         this.posY = posY;
         this.dirX = dirX;
         this.dirY = dirY;
         this.planeX = planeX;
         this.planeY = planeY;
+        controls = new Controls();
     }
 
-    public void keyPressed(KeyEvent key) {
-        if (key.getKeyCode() == KeyEvent.VK_LEFT) {
-            rotLeft = true;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_RIGHT) {
-            rotRight = true;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_W) {
-            forward = true;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_S) {
-            backward = true;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_A) {
-            left = true;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_D) {
-            right = true;
-        }
-
-        if (key.getKeyCode() == KeyEvent.VK_M) {
-            View2D.getView2Dframe().setVisible(!View2D.getView2Dframe().isVisible());
-        }
-        if (key.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            System.exit(0);
-        }
-    }
-
-    public void keyReleased(KeyEvent key) {
-        if (key.getKeyCode() == KeyEvent.VK_LEFT) {
-            rotLeft = false;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_RIGHT) {
-            rotRight = false;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_W) {
-            forward = false;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_S) {
-            backward = false;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_A) {
-            left = false;
-        }
-        if (key.getKeyCode() == KeyEvent.VK_D) {
-            right = false;
-        }
-    }
-
-    public void update(int[][] map) {
-        if (forward) {
+    public void movementUpdate(int[][] map) {
+        if (controls.isForward()) {
             if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == 0) {
                 posX += dirX * MOVE_SPEED;
             }
@@ -76,7 +32,7 @@ public class PlayerHandling implements KeyListener {
                 posY += dirY * MOVE_SPEED;
             }
         }
-        if (backward) {
+        if (controls.isBackward()) {
             if (map[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == 0) {
                 posX -= dirX * MOVE_SPEED;
             }
@@ -84,13 +40,13 @@ public class PlayerHandling implements KeyListener {
                 posY -= dirY * MOVE_SPEED;
             }
         }
-        if (right) {
+        if (controls.isRight()) {
             // code here
         }
-        if (left) {
+        if (controls.isLeft()) {
             // code here
         }
-        if (rotRight) {
+        if (controls.isRotRight()) {
             double oldDirX = dirX;
             double oldPlaneX = planeX;
             dirX = dirX * Math.cos(-ROTATION_SPEED) - dirY * Math.sin(-ROTATION_SPEED);
@@ -98,7 +54,7 @@ public class PlayerHandling implements KeyListener {
             planeX = planeX * Math.cos(-ROTATION_SPEED) - planeY * Math.sin(-ROTATION_SPEED);
             planeY = oldPlaneX * Math.sin(-ROTATION_SPEED) + planeY * Math.cos(-ROTATION_SPEED);
         }
-        if (rotLeft) {
+        if (controls.isRotLeft()) {
             double oldDirX = dirX;
             double oldPlaneX = planeX;
             dirX = dirX * Math.cos(ROTATION_SPEED) - dirY * Math.sin(ROTATION_SPEED);
@@ -106,10 +62,6 @@ public class PlayerHandling implements KeyListener {
             planeX = planeX * Math.cos(ROTATION_SPEED) - planeY * Math.sin(ROTATION_SPEED);
             planeY = oldPlaneX * Math.sin(ROTATION_SPEED) + planeY * Math.cos(ROTATION_SPEED);
         }
-    }
-
-    public void keyTyped(KeyEvent arg0) {
-        //nothing here
     }
 
     public double getPosX() {
@@ -154,10 +106,7 @@ public class PlayerHandling implements KeyListener {
         this.planeY = planeY;
     }
 
-    public double getMOVE_SPEED() {
-        return MOVE_SPEED;
-    }
-    public double getROTATION_SPEED() {
-        return ROTATION_SPEED;
+    public Controls getControls() {
+        return controls;
     }
 }

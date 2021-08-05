@@ -1,3 +1,7 @@
+package dev;
+
+import dev.player.Player;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -7,13 +11,13 @@ import java.awt.geom.Rectangle2D;
 public class View2D extends JPanel {
 
     private final int[][] map;
-    private final PlayerHandling playerHandling;
+    private final Player player;
     private final Screen screen;
     private static JFrame view2Dframe;
 
-    public View2D(int[][] map, PlayerHandling playerHandling, Screen screen) {
+    public View2D(int[][] map, Player player, Screen screen) {
         this.map = map;
-        this.playerHandling = playerHandling;
+        this.player = player;
         this.screen = screen;
         view2Dframe = new JFrame("2D Preview");
         view2Dframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -23,7 +27,7 @@ public class View2D extends JPanel {
         view2Dframe.setTitle("2D preview");
         view2Dframe.setLocationRelativeTo(null);
         view2Dframe.setVisible(false);
-        view2Dframe.addKeyListener(playerHandling);
+        view2Dframe.addKeyListener(player.getControls());
     }
 
     private void drawGrid(Graphics g) {
@@ -46,7 +50,7 @@ public class View2D extends JPanel {
     private void drawPlayer(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.BLUE);
-        g2d.fill(new Ellipse2D.Double(playerHandling.getPosX() * 40 - 5, playerHandling.getPosY() * 40 - 5, 10, 10));
+        g2d.fill(new Ellipse2D.Double(player.getPosX() * 40 - 5, player.getPosY() * 40 - 5, 10, 10));
     }
 
     private void drawRay(Graphics g) {
@@ -54,7 +58,7 @@ public class View2D extends JPanel {
         g2d.setColor(Color.RED);
 
         for (int i = 0; i < calculateRays(67).length; i++) {
-            g2d.draw(new Line2D.Double(playerHandling.getPosX() * 40, playerHandling.getPosY() * 40, calculateRays(67)[i][0]  * 40, calculateRays(67)[i][1] * 40));
+            g2d.draw(new Line2D.Double(player.getPosX() * 40, player.getPosY() * 40, calculateRays(67)[i][0]  * 40, calculateRays(67)[i][1] * 40));
         }
 
 
@@ -67,11 +71,11 @@ public class View2D extends JPanel {
         int arrayIter = 0;
 
         for (int i = -((rayNumber - 1)/2); i <= (rayNumber - 1)/2; i++) { // copy of algorithms from screen calculations
-            dirX = playerHandling.getDirX() * Math.cos(Math.toRadians(i)) - playerHandling.getDirY() * Math.sin(Math.toRadians(i));
-            dirY = playerHandling.getDirX() * Math.sin(Math.toRadians(i)) + playerHandling.getDirY() * Math.cos(Math.toRadians(i));
+            dirX = player.getDirX() * Math.cos(Math.toRadians(i)) - player.getDirY() * Math.sin(Math.toRadians(i));
+            dirY = player.getDirX() * Math.sin(Math.toRadians(i)) + player.getDirY() * Math.cos(Math.toRadians(i));
 
-            int mapX = (int) playerHandling.getPosX();
-            int mapY = (int) playerHandling.getPosY();
+            int mapX = (int) player.getPosX();
+            int mapY = (int) player.getPosY();
 
             double sideDistX;
             double sideDistY;
@@ -88,17 +92,17 @@ public class View2D extends JPanel {
 
             if (dirX < 0) {
                 stepX = -1;
-                sideDistX = (playerHandling.getPosX() - mapX) * deltaDistX;
+                sideDistX = (player.getPosX() - mapX) * deltaDistX;
             } else {
                 stepX = 1;
-                sideDistX = (mapX + 1.0 - playerHandling.getPosX()) * deltaDistX;
+                sideDistX = (mapX + 1.0 - player.getPosX()) * deltaDistX;
             }
             if (dirY < 0) {
                 stepY = -1;
-                sideDistY = (playerHandling.getPosY() - mapY) * deltaDistY;
+                sideDistY = (player.getPosY() - mapY) * deltaDistY;
             } else {
                 stepY = 1;
-                sideDistY = (mapY + 1.0 - playerHandling.getPosY()) * deltaDistY;
+                sideDistY = (mapY + 1.0 - player.getPosY()) * deltaDistY;
             }
 
             while (hit == 0) {
@@ -118,13 +122,13 @@ public class View2D extends JPanel {
             }
 
             if (side == 0) {
-                perpWallDist = (mapX - playerHandling.getPosX() + (double) (1 - stepX) / 2) / dirX;
+                perpWallDist = (mapX - player.getPosX() + (double) (1 - stepX) / 2) / dirX;
             } else {
-                perpWallDist = (mapY - playerHandling.getPosY() + (double) (1 - stepY) / 2) / dirY;
+                perpWallDist = (mapY - player.getPosY() + (double) (1 - stepY) / 2) / dirY;
             }
 
-            vertexX = playerHandling.getPosX() + dirX * perpWallDist;
-            vertexY = playerHandling.getPosY() + dirY * perpWallDist;
+            vertexX = player.getPosX() + dirX * perpWallDist;
+            vertexY = player.getPosY() + dirY * perpWallDist;
 
             rays[arrayIter][0] = vertexX;
             rays[arrayIter][1] = vertexY;

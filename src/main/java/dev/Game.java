@@ -1,3 +1,7 @@
+package dev;
+
+import dev.player.Player;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -7,15 +11,13 @@ import java.util.ArrayList;
 
 public class Game extends JFrame implements Runnable {
 
-    private int mapWidth;
-    private int mapHeight;
     private final Thread mainThread;
     private boolean running;
     private final BufferedImage image;
     private final int[] pixels;
     private static int[][] map;
     private ArrayList<Textures> textures;
-    private final PlayerHandling playerHandling;
+    private final Player player;
     private final Screen screen;
     private View2D view2D;
 
@@ -28,10 +30,10 @@ public class Game extends JFrame implements Runnable {
         textures.add(Textures.basicWall);
         textures.add(Textures.basicFloor);
         textures.add(Textures.basicCeiling);
-        playerHandling = new PlayerHandling(4.5, 4.5, 1, 0, 0, -0.66);
-        screen = new Screen(map, mapWidth, mapHeight, textures, 1280, 720);
-        view2D = new View2D(map, playerHandling, screen);
-        addKeyListener(playerHandling);
+        player = new Player(4.5, 4.5, 1, 0, 0, -0.66);
+        screen = new Screen(map, textures, 1280, 720);
+        view2D = new View2D(map, player, screen);
+        addKeyListener(player.getControls());
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -81,8 +83,8 @@ public class Game extends JFrame implements Runnable {
             delta = delta + ((now - lastTime) / nanos);
             lastTime = now;
             while (delta >= 1) {
-                screen.update(playerHandling, pixels);
-                playerHandling.update(map);
+                screen.update(player, pixels);
+                player.movementUpdate(map);
                 delta--;
             }
             view2D.repaint();
@@ -91,7 +93,7 @@ public class Game extends JFrame implements Runnable {
     }
 
     public static void main(String [] args) {
-        Game game = new Game();
+        new Game();
     }
 
 }
