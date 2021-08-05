@@ -6,8 +6,8 @@ public class Camera implements KeyListener {
 
     private double posX, posY, dirX, dirY, planeX, planeY;
     private boolean left, right, forward, backward, rotLeft, rotRight;
-    private final double MOVE_SPEED = .04;
-    private final double ROTATION_SPEED = .045;
+    private final double MOVE_SPEED = 0.04;
+    private final double ROTATION_SPEED = 0.045;
 
     public Camera(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
         this.posX = posX;
@@ -61,6 +61,8 @@ public class Camera implements KeyListener {
     }
 
     public void update(int[][] map) {
+        System.out.println("DirX: " + dirX);
+        System.out.println("DirY: " + dirY);
         if (forward) {
             if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == 0) {
                 posX += dirX * MOVE_SPEED;
@@ -78,10 +80,10 @@ public class Camera implements KeyListener {
             }
         }
         if (right) {
-            // right move
+            // code here
         }
         if (left) {
-            // left move
+            // code here
         }
         if (rotRight) {
             double oldDirX = dirX;

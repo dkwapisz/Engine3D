@@ -66,15 +66,76 @@ public class View2D extends JPanel {
     }
 
     private double[][] calculateRays() {
-        double[][] rays = new double[1][2];
+        double[][] rays = new double[67][2];
+        double dirX, dirY, vertexX, vertexY;
+        int arrayIter = 0;
 
+        for (int i = -33; i <= 33; i++) { // copy of algorithms from screen calculations
+            dirX = camera.getDirX() * Math.cos(Math.toRadians(i)) - camera.getDirY() * Math.sin(Math.toRadians(i));
+            dirY = camera.getDirX() * Math.sin(Math.toRadians(i)) + camera.getDirY() * Math.cos(Math.toRadians(i));
 
+            int mapX = (int) camera.getPosX();
+            int mapY = (int) camera.getPosY();
 
-        double vertexMiddleX = camera.getPosX() + camera.getDirX();
-        double vertexMiddleY = camera.getPosY() + camera.getDirY();
+            double sideDistX;
+            double sideDistY;
 
-        rays[0][0] = vertexMiddleX;
-        rays[0][1] = vertexMiddleY;
+            double deltaDistX = Math.abs(1 / dirX);
+            double deltaDistY = Math.abs(1 / dirY);
+            double perpWallDist;
+
+            int stepX;
+            int stepY;
+
+            int hit = 0;
+            int side = 0;
+
+            if (dirX < 0) {
+                stepX = -1;
+                sideDistX = (camera.getPosX() - mapX) * deltaDistX;
+            } else {
+                stepX = 1;
+                sideDistX = (mapX + 1.0 - camera.getPosX()) * deltaDistX;
+            }
+            if (dirY < 0) {
+                stepY = -1;
+                sideDistY = (camera.getPosY() - mapY) * deltaDistY;
+            } else {
+                stepY = 1;
+                sideDistY = (mapY + 1.0 - camera.getPosY()) * deltaDistY;
+            }
+
+            while (hit == 0) {
+                if (sideDistX < sideDistY) {
+                    sideDistX += deltaDistX;
+                    mapX += stepX;
+                    side = 0;
+                }
+                else {
+                    sideDistY += deltaDistY;
+                    mapY += stepY;
+                    side = 1;
+                }
+                if (map[mapX][mapY] > 0) {
+                    hit = 1;
+                }
+            }
+
+            if (side == 0) {
+                perpWallDist = (mapX - camera.getPosX() + (double) (1 - stepX) / 2) / dirX;
+            } else {
+                perpWallDist = (mapY - camera.getPosY() + (double) (1 - stepY) / 2) / dirY;
+            }
+
+            vertexX = camera.getPosX() + dirX * perpWallDist;
+            vertexY = camera.getPosY() + dirY * perpWallDist;
+
+            rays[arrayIter][0] = vertexX;
+            rays[arrayIter][1] = vertexY;
+
+            arrayIter++;
+        }
+
 
 
         return rays;
