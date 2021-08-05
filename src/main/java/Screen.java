@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.awt.Color;
 
 public class Screen {
     private int[][] map;
@@ -15,26 +14,57 @@ public class Screen {
         this.height = height;
     }
 
-    public void update(Camera camera, int[] pixels) {
+    public void update(PlayerHandling playerHandling, int[] pixels) {
 
-        for (int i = 0; i < pixels.length; i++) {
-            // Paint ceiling
-            if (pixels[i] != Color.DARK_GRAY.getRGB() && i < pixels.length/2) {
-                pixels[i] = Color.DARK_GRAY.getRGB();
-            }
-            // Paint floor
-            if (pixels[i] != Color.GRAY.getRGB() && i >= pixels.length/2) {
-                pixels[i] = Color.GRAY.getRGB();
+        for (int y = 0; y < height; y++) {
+            double rayDirX0 = playerHandling.getDirX() - playerHandling.getPlaneX();
+            double rayDirX1 = playerHandling.getDirX() + playerHandling.getPlaneX();
+            double rayDirY0 = playerHandling.getDirY() - playerHandling.getPlaneY();
+            double rayDirY1 = playerHandling.getDirY() + playerHandling.getPlaneY();
+
+            int actualY = y - height / 2;
+
+            double cameraPosV = 0.5 * height;
+            double rowDistance = cameraPosV / actualY;
+
+            double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / width;
+            double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / width;
+
+            double floorX = playerHandling.getPosX() + rowDistance * rayDirX0;
+            double floorY = playerHandling.getPosY() + rowDistance * rayDirY0;
+
+            for (int x = 0; x < width; ++x) {
+                int cellX = (int) floorX;
+                int cellY = (int) floorY;
+
+                int texNum = 1; // tekstura znajduję się na miejscu 1 w ArrayList
+                int texSize = Textures.basicFloor.getSIZE();
+                int texX = (int) (texSize * (floorX - cellX)) & (texSize - 1);
+                int texY = (int) (texSize * (floorY - cellY)) & (texSize - 1);
+
+                floorX += floorStepX;
+                floorY += floorStepY;
+
+                int color;
+                if ((x + y * width) > pixels.length / 2) {
+                    // Floor
+                    color = Textures.basicFloor.getPixels()[texSize * texY + texX];
+                    pixels[x + y * width] = color;
+                } else {
+                    // Ceiling
+                    color = Textures.basicCeiling.getPixels()[texSize * texY + texX];
+                    pixels[x + y * width] = color;
+                }
             }
         }
 
         for (int x = 0; x < width; x++) {
             double cameraX = (2 * x) / ((double) width) - 1;
-            double rayDirX = camera.getDirX() + camera.getPlaneX() * cameraX;
-            double rayDirY = camera.getDirY() + camera.getPlaneY() * cameraX;
+            double rayDirX = playerHandling.getDirX() + playerHandling.getPlaneX() * cameraX;
+            double rayDirY = playerHandling.getDirY() + playerHandling.getPlaneY() * cameraX;
 
-            int mapX = (int) camera.getPosX();
-            int mapY = (int) camera.getPosY();
+            int mapX = (int) playerHandling.getPosX();
+            int mapY = (int) playerHandling.getPosY();
 
             double sideDistX, sideDistY;
             double rayLength;
@@ -50,17 +80,17 @@ public class Screen {
 
             if (rayDirX >= 0) {
                 stepX = 1;
-                sideDistX = (1 - (camera.getPosX() - mapX)) * deltaDistX;
+                sideDistX = (1 - (playerHandling.getPosX() - mapX)) * deltaDistX;
             } else {
                 stepX = -1;
-                sideDistX = (camera.getPosX() - mapX) * deltaDistX;
+                sideDistX = (playerHandling.getPosX() - mapX) * deltaDistX;
             }
             if (rayDirY >= 0) {
                 stepY = 1;
-                sideDistY = (1 - (camera.getPosY() - mapY)) * deltaDistY;
+                sideDistY = (1 - (playerHandling.getPosY() - mapY)) * deltaDistY;
             } else {
                 stepY = -1;
-                sideDistY = (camera.getPosY() - mapY) * deltaDistY;
+                sideDistY = (playerHandling.getPosY() - mapY) * deltaDistY;
             }
 
             while (!rayHit) {
@@ -80,9 +110,9 @@ public class Screen {
             }
 
             if (wallSide == 0) {
-                rayLength = Math.abs((mapX - camera.getPosX() + ((double) (1 - stepX)) / 2) / rayDirX);
+                rayLength = Math.abs((mapX - playerHandling.getPosX() + ((double) (1 - stepX)) / 2) / rayDirX);
             } else {
-                rayLength = Math.abs((mapY - camera.getPosY() + ((double) (1 - stepY)) / 2) / rayDirY);
+                rayLength = Math.abs((mapY - playerHandling.getPosY() + ((double) (1 - stepY)) / 2) / rayDirY);
             }
 
             if (rayLength > 0) {
@@ -101,13 +131,13 @@ public class Screen {
                 drawEnd = height - 1;
             }
 
-            int texNum = map[mapX][mapY] - 1;
+            int texNum = 0; // tekstura znajduję się na miejscu 0 w ArrayList
             double wallHitPos;
 
             if (wallSide == 1) {
-                wallHitPos = (camera.getPosX() + ((mapY - camera.getPosY() + ((double) (1 - stepY) / 2)) / rayDirY) * rayDirX);
+                wallHitPos = (playerHandling.getPosX() + ((mapY - playerHandling.getPosY() + ((double) (1 - stepY) / 2)) / rayDirY) * rayDirX);
             } else {
-                wallHitPos = (camera.getPosY() + ((mapX - camera.getPosX() + ((double) (1 - stepX) / 2)) / rayDirX) * rayDirY);
+                wallHitPos = (playerHandling.getPosY() + ((mapX - playerHandling.getPosX() + ((double) (1 - stepX) / 2)) / rayDirX) * rayDirY);
             }
 
             wallHitPos -= Math.floor(wallHitPos);
@@ -125,9 +155,9 @@ public class Screen {
                 if (wallSide == 0) {
                     color = textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())];
                 } else {
-                    color = (textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())] >> 1) & 8355711;
+                    color = (textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())]);
                 }
-                pixels[x + y*(width)] = color;
+                pixels[x + y * (width)] = color;
             }
         }
     }

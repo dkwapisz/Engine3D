@@ -4,7 +4,6 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Game extends JFrame implements Runnable {
 
@@ -16,7 +15,7 @@ public class Game extends JFrame implements Runnable {
     private final int[] pixels;
     private static int[][] map;
     private ArrayList<Textures> textures;
-    private final Camera camera;
+    private final PlayerHandling playerHandling;
     private final Screen screen;
     private View2D view2D;
 
@@ -27,10 +26,12 @@ public class Game extends JFrame implements Runnable {
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
         textures = new ArrayList<>();
         textures.add(Textures.basicWall);
-        camera = new Camera(4.5, 4.5, 1, 0, 0, -0.66);
+        textures.add(Textures.basicFloor);
+        textures.add(Textures.basicCeiling);
+        playerHandling = new PlayerHandling(4.5, 4.5, 1, 0, 0, -0.66);
         screen = new Screen(map, mapWidth, mapHeight, textures, 1280, 720);
-        view2D = new View2D(map, camera, screen);
-        addKeyListener(camera);
+        view2D = new View2D(map, playerHandling, screen);
+        addKeyListener(playerHandling);
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -80,8 +81,8 @@ public class Game extends JFrame implements Runnable {
             delta = delta + ((now - lastTime) / nanos);
             lastTime = now;
             while (delta >= 1) {
-                screen.update(camera, pixels);
-                camera.update(map);
+                screen.update(playerHandling, pixels);
+                playerHandling.update(map);
                 delta--;
             }
             view2D.repaint();

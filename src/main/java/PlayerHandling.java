@@ -2,14 +2,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 
-public class Camera implements KeyListener {
+public class PlayerHandling implements KeyListener {
 
     private double posX, posY, dirX, dirY, planeX, planeY;
     private boolean left, right, forward, backward, rotLeft, rotRight;
     private final double MOVE_SPEED = 0.04;
     private final double ROTATION_SPEED = 0.045;
 
-    public Camera(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
+    public PlayerHandling(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
         this.posX = posX;
         this.posY = posY;
         this.dirX = dirX;
@@ -37,6 +37,13 @@ public class Camera implements KeyListener {
         if (key.getKeyCode() == KeyEvent.VK_D) {
             right = true;
         }
+
+        if (key.getKeyCode() == KeyEvent.VK_M) {
+            View2D.getView2Dframe().setVisible(!View2D.getView2Dframe().isVisible());
+        }
+        if (key.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.exit(0);
+        }
     }
 
     public void keyReleased(KeyEvent key) {
@@ -61,8 +68,6 @@ public class Camera implements KeyListener {
     }
 
     public void update(int[][] map) {
-        System.out.println("DirX: " + dirX);
-        System.out.println("DirY: " + dirY);
         if (forward) {
             if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == 0) {
                 posX += dirX * MOVE_SPEED;
