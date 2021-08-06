@@ -7,7 +7,7 @@ import java.awt.event.KeyListener;
 
 public class Controls implements KeyListener {
 
-    private boolean left, right, forward, backward, rotLeft, rotRight;
+    private boolean left, right, forward, backward, rotLeft, rotRight, openDoor;
 
     public void keyPressed(KeyEvent key) {
         if (key.getKeyCode() == KeyEvent.VK_LEFT) {
@@ -27,6 +27,9 @@ public class Controls implements KeyListener {
         }
         if (key.getKeyCode() == KeyEvent.VK_D) {
             right = true;
+        }
+        if (key.getKeyCode() == KeyEvent.VK_SPACE) {
+            openDoor = true;
         }
 
         if (key.getKeyCode() == KeyEvent.VK_M) {
@@ -56,6 +59,9 @@ public class Controls implements KeyListener {
         if (key.getKeyCode() == KeyEvent.VK_D) {
             right = false;
         }
+        if (key.getKeyCode() == KeyEvent.VK_SPACE) {
+            openDoor = false;
+        }
     }
 
     public void keyTyped(KeyEvent arg0) {
@@ -79,5 +85,8 @@ public class Controls implements KeyListener {
     }
     public boolean isRotRight() {
         return rotRight;
+    }
+    public boolean isOpenDoor() {
+        return openDoor;
     }
 }

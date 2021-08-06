@@ -1,60 +1,64 @@
 package dev.player;
 
-import dev.View2D;
+import mapUtilities.Door;
+import mapUtilities.StaticObjects;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.*;
 
 
 public class Player {
 
+    private StaticObjects[][] map;
     private double posX, posY, dirX, dirY, planeX, planeY;
     private final Controls controls;
     private final double MOVE_SPEED = 0.04;
     private final double ROTATION_SPEED = 0.045;
 
-    public Player(double posX, double posY, double dirX, double dirY, double planeX, double planeY) {
+    public Player(double posX, double posY, double dirX, double dirY, double planeX, double planeY, StaticObjects[][] map) {
         this.posX = posX;
         this.posY = posY;
         this.dirX = dirX;
         this.dirY = dirY;
         this.planeX = planeX;
         this.planeY = planeY;
+        this.map = map;
         controls = new Controls();
     }
 
-    public void movementUpdate(int[][] map) {
+    public void movementUpdate(StaticObjects[][] map) {
         if (controls.isForward()) {
-            if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == 0) {
+            if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == null) {
                 posX += dirX * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + dirY * MOVE_SPEED)] == 0) {
+            if (map[(int) posX][(int) (posY + dirY * MOVE_SPEED)] == null) {
                 posY += dirY * MOVE_SPEED;
             }
         }
         if (controls.isBackward()) {
-            if (map[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == 0) {
+            if (map[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == null) {
                 posX -= dirX * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY - dirY * MOVE_SPEED)] == 0) {
+            if (map[(int) posX][(int) (posY - dirY * MOVE_SPEED)] == null) {
                 posY -= dirY * MOVE_SPEED;
             }
         }
         if (controls.isRight()) {
-            if (map[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == 0 ||
-                map[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == 0) {
-
+            //TODO Crash when going to corners
+            if (map[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null) {
                 posX += (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED;
+            }
+            if (map[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == null) {
                 posY += (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED;
             }
         }
         if (controls.isLeft()) {
-            if (map[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == 0 ||
-                map[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == 0) {
-
+            if (map[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null) {
                 posX += (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED;
+            }
+            if (map[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == null) {
                 posY += (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED;
             }
+
         }
         if (controls.isRotRight()) {
             double oldDirX = dirX;
@@ -71,6 +75,24 @@ public class Player {
             dirY = oldDirX * Math.sin(ROTATION_SPEED) + dirY * Math.cos(ROTATION_SPEED);
             planeX = planeX * Math.cos(ROTATION_SPEED) - planeY * Math.sin(ROTATION_SPEED);
             planeY = oldPlaneX * Math.sin(ROTATION_SPEED) + planeY * Math.cos(ROTATION_SPEED);
+        }
+        if (controls.isOpenDoor()) {
+            openDoor();
+        }
+    }
+
+    private void openDoor() {
+        int playerVecX = (int) (posX + dirX);
+        int playerVecY = (int) (posY + dirY);
+
+        for (int x = 0; x < map.length; x++) {
+            for (int y = 0; y < map[x].length; y++) {
+                if (map[x][y] instanceof Door) {
+                    if ((new Rectangle(playerVecX, playerVecY,1,1)).intersects(new Rectangle(x, y, 1, 1))) {
+                        ((Door) map[x][y]).open();
+                    }
+                }
+            }
         }
     }
 

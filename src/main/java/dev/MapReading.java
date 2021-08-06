@@ -1,5 +1,9 @@
 package dev;
 
+import mapUtilities.Door;
+import mapUtilities.StaticObjects;
+import mapUtilities.Wall;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -8,11 +12,12 @@ import java.io.IOException;
 
 public class MapReading {
 
-    public static int[][] getMap() {
+    public static StaticObjects[][] getMap() {
         BufferedImage mapImage = loadImage("src/main/resources/maps/map0.png");
-        int[][] map = new int[mapImage.getWidth()][mapImage.getHeight()];
+        StaticObjects[][] map = new StaticObjects[mapImage.getWidth()][mapImage.getHeight()];
         int freeSpace = new Color(255, 255, 255).getRGB();
         int basicWall = new Color(0, 0, 0).getRGB();
+        int basicDoor = new Color(0, 0, 255).getRGB();
 
         for (int x = 0; x < mapImage.getWidth(); x++) {
             for (int y = 0; y < mapImage.getHeight(); y++) {
@@ -20,10 +25,13 @@ public class MapReading {
                 int currentPixel = mapImage.getRGB(x, y);
 
                 if (currentPixel == freeSpace) {
-                    map[x][y] = 0;
+                    map[x][y] = null;
                 }
                 else if (currentPixel == basicWall) {
-                    map[x][y] = 1;
+                    map[x][y] = new Wall();
+                }
+                else if (currentPixel == basicDoor) {
+                    map[x][y] = new Door();
                 }
 
             }

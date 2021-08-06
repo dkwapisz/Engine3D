@@ -1,6 +1,7 @@
 package dev;
 
 import dev.player.Player;
+import mapUtilities.StaticObjects;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class Game extends JFrame implements Runnable {
     private boolean running;
     private final BufferedImage image;
     private final int[] pixels;
-    private static int[][] map;
+    private static StaticObjects[][] map;
     private ArrayList<Textures> textures;
     private final Player player;
     private final Screen screen;
@@ -26,11 +27,8 @@ public class Game extends JFrame implements Runnable {
         mainThread = new Thread(this);
         image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-        textures = new ArrayList<>();
-        textures.add(Textures.basicWall);
-        textures.add(Textures.basicFloor);
-        textures.add(Textures.basicCeiling);
-        player = new Player(4.5, 4.5, 1, 0, 0, -0.66);
+        loadTextures();
+        player = new Player(4.5, 4.5, 1, 0, 0, -0.66, map);
         screen = new Screen(map, textures, 1280, 720);
         view2D = new View2D(map, player, screen);
         addKeyListener(player.getControls());
@@ -42,6 +40,12 @@ public class Game extends JFrame implements Runnable {
         setLocationRelativeTo(null);
         setVisible(true);
         start();
+    }
+
+    private void loadTextures() {
+        textures = new ArrayList<>();
+        textures.add(Textures.basicWall);
+        textures.add(Textures.basicDoor);
     }
 
     private synchronized void start() {

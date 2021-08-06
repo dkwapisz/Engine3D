@@ -1,6 +1,9 @@
 package dev;
 
 import dev.player.Player;
+import mapUtilities.Door;
+import mapUtilities.StaticObjects;
+import mapUtilities.Wall;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,12 +13,12 @@ import java.awt.geom.Rectangle2D;
 
 public class View2D extends JPanel {
 
-    private final int[][] map;
+    private final StaticObjects[][] map;
     private final Player player;
     private final Screen screen;
     private static JFrame view2Dframe;
 
-    public View2D(int[][] map, Player player, Screen screen) {
+    public View2D(StaticObjects[][] map, Player player, Screen screen) {
         this.map = map;
         this.player = player;
         this.screen = screen;
@@ -35,10 +38,12 @@ public class View2D extends JPanel {
 
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[x].length; y++) {
-                if (map[x][y] != 0) {
-                    g2d.setColor(Color.BLACK);
-                } else {
+                if (map[x][y] == null) {
                     g2d.setColor(Color.WHITE);
+                } else if (map[x][y] instanceof Wall) {
+                    g2d.setColor(Color.BLACK);
+                } else if (map[x][y] instanceof Door) {
+                    g2d.setColor(Color.BLUE);
                 }
                 g2d.fill(new Rectangle2D.Double(x * 40, y * 40, 40, 40));
                 g2d.setColor(Color.DARK_GRAY);
@@ -116,7 +121,7 @@ public class View2D extends JPanel {
                     mapY += stepY;
                     side = 1;
                 }
-                if (map[mapX][mapY] > 0) {
+                if (map[mapX][mapY] != null) {
                     hit = 1;
                 }
             }

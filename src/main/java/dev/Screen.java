@@ -1,15 +1,19 @@
 package dev;
 
 import dev.player.Player;
+import mapUtilities.Door;
+import mapUtilities.StaticObjects;
+import mapUtilities.Wall;
 
 import java.util.ArrayList;
 
 public class Screen {
-    private int[][] map;
+
+    private StaticObjects[][] map;
     private int screenWidth, screenHeight;
     private ArrayList<Textures> textures;
 
-    public Screen(int[][] map, ArrayList<Textures> textures, int screenWidth, int screenHeight) {
+    public Screen(StaticObjects[][] map, ArrayList<Textures> textures, int screenWidth, int screenHeight) {
         this.map = map;
         this.textures = textures;
         this.screenWidth = screenWidth;
@@ -40,8 +44,6 @@ public class Screen {
                 int cellX = (int) floorX;
                 int cellY = (int) floorY;
 
-                int texNumFloor = 1; // tekstura Floor znajduję się na miejscu 1 w ArrayList
-                int texNumCeiling = 2; // tekstura Ceiling znajduję się na miejscu 1 w ArrayList
                 int texSize = Textures.basicFloor.getSIZE();
 
                 int color;
@@ -110,7 +112,7 @@ public class Screen {
                     wallSide = 1;
                 }
 
-                if (map[mapX][mapY] > 0) {
+                if (map[mapX][mapY] != null) {
                     rayHit = true;
                 }
             }
@@ -126,9 +128,9 @@ public class Screen {
             } else {
                 wallHeight = screenHeight;
             }
-
-            int drawStart = -wallHeight/2 + screenHeight /2;
-            int drawEnd = wallHeight/2 + screenHeight /2;
+            // Its when you dont see whole wall
+            int drawStart = -wallHeight / 2 + screenHeight / 2;
+            int drawEnd = wallHeight / 2 + screenHeight / 2;
 
             if (drawStart < 0) {
                 drawStart = 0;
@@ -137,7 +139,16 @@ public class Screen {
                 drawEnd = screenHeight - 1;
             }
 
-            int texNum = 0; // tekstura znajduję się na miejscu 0 w ArrayList
+            int texNum = -1;
+
+            if (map[mapX][mapY] != null) {
+                if (map[mapX][mapY] instanceof Wall) {
+                    texNum = 0;
+                } else if (map[mapX][mapY] instanceof Door) {
+                    texNum = 1;
+                }
+            }
+
             double wallHitPos;
 
             if (wallSide == 1) {
