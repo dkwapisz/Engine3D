@@ -41,10 +41,20 @@ public class Player {
             }
         }
         if (controls.isRight()) {
-            // code here
+            if (map[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == 0 ||
+                map[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == 0) {
+
+                posX += (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED;
+                posY += (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED;
+            }
         }
         if (controls.isLeft()) {
-            // code here
+            if (map[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == 0 ||
+                map[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == 0) {
+
+                posX += (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED;
+                posY += (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED;
+            }
         }
         if (controls.isRotRight()) {
             double oldDirX = dirX;
