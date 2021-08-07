@@ -25,37 +25,45 @@ public class Player {
         controls = new Controls();
     }
 
-    public void movementUpdate(StaticObjects[][] map) {
+    public void movementUpdate() {
         if (controls.isForward()) {
-            if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == null) {
+            if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == null ||
+                checkIfDoorOpen((int) (posX + dirX * MOVE_SPEED), (int) posY)) {
                 posX += dirX * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + dirY * MOVE_SPEED)] == null) {
+            if (map[(int) posX][(int) (posY + dirY * MOVE_SPEED)] == null ||
+                checkIfDoorOpen((int) posX, (int) (posY + dirY * MOVE_SPEED))) {
                 posY += dirY * MOVE_SPEED;
             }
         }
         if (controls.isBackward()) {
-            if (map[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == null) {
+            if (map[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == null ||
+                checkIfDoorOpen((int) (posX - dirX * MOVE_SPEED), (int) posY)) {
                 posX -= dirX * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY - dirY * MOVE_SPEED)] == null) {
+            if (map[(int) posX][(int) (posY - dirY * MOVE_SPEED)] == null ||
+                checkIfDoorOpen((int) posX, (int) (posY - dirY * MOVE_SPEED))) {
                 posY -= dirY * MOVE_SPEED;
             }
         }
         if (controls.isRight()) {
             //TODO Crash when going to corners
-            if (map[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null) {
+            if (map[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null ||
+                checkIfDoorOpen((int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED), (int) posY)) {
                 posX += (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == null) {
+            if (map[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == null ||
+                checkIfDoorOpen((int) posX, (int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED))) {
                 posY += (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED;
             }
         }
         if (controls.isLeft()) {
-            if (map[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null) {
+            if (map[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null ||
+                checkIfDoorOpen((int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED), (int) posY)) {
                 posX += (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == null) {
+            if (map[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == null ||
+                checkIfDoorOpen((int) posX, (int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED))) {
                 posY += (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED;
             }
 
@@ -94,6 +102,10 @@ public class Player {
                 }
             }
         }
+    }
+
+    private boolean checkIfDoorOpen(int x, int y) {
+        return (map[x][y] instanceof Door && ((Door) map[x][y]).isOpened());
     }
 
     public double getPosX() {

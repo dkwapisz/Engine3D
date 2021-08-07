@@ -16,7 +16,6 @@ public class Door extends StaticObjects {
             TimerTask openDoorTask = new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.println(doorProgress);
                     if (doorProgress == 100) {
                         opened = true;
                         closeStarted = false;
@@ -38,9 +37,8 @@ public class Door extends StaticObjects {
             TimerTask closeDoorTask = new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.println(doorProgress);
+                    opened = false;
                     if (doorProgress == 0) {
-                        opened = false;
                         openStarted = false;
                         this.cancel();
                     }

@@ -88,7 +88,7 @@ public class Game extends JFrame implements Runnable {
             lastTime = now;
             while (delta >= 1) {
                 screen.update(player, pixels);
-                player.movementUpdate(map);
+                player.movementUpdate();
                 delta--;
             }
             view2D.repaint();

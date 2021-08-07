@@ -5,6 +5,7 @@ import mapUtilities.Door;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Screen {
@@ -131,7 +132,7 @@ public class Screen {
             // Its when you dont see whole wall
             int drawStart = -wallHeight / 2 + screenHeight / 2;
             int drawEnd = wallHeight / 2 + screenHeight / 2;
-
+            // When you see whole wall
             if (drawStart < 0) {
                 drawStart = 0;
             }
@@ -166,10 +167,18 @@ public class Screen {
             }
 
             for (int y = drawStart; y < drawEnd; y++) {
-                int textureY = (((2 * y - screenHeight + wallHeight) << 6) / wallHeight) / 2;
-                int color;
+                int textureY = (((2 * y - screenHeight + wallHeight) << 8) / wallHeight) / 2;
+                int color = 0;
 
-                color = textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())];
+                if (map[mapX][mapY] instanceof Door && (((Door) map[mapX][mapY]).isOpenStarted() || ((Door) map[mapX][mapY]).isCloseStarted())) {
+                    textureY += ((Door) map[mapX][mapY]).getDoorProgress()*(2.5);
+                }
+                try {
+                    color = textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())];
+                } catch (ArrayIndexOutOfBoundsException doorException) {
+                    //color = textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())];
+                }
+
                 pixels[x + y * screenWidth] = color;
             }
         }
