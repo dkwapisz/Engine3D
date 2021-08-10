@@ -11,16 +11,38 @@ import java.util.ArrayList;
 public class Screen {
 
     private StaticObjects[][] map;
+    private StaticObjects[][] mapWithoutDoor;
+    private ArrayList<Integer> doorPositions;
     private int screenWidth, screenHeight;
     private ArrayList<Textures> textures;
+    private double[] ZBuffer;
+//    double[] sprite = new double[] {4, 2};
+//    int[] spriteOrder = new int[sprite.length];
+//    double[] spriteDistance = new double[sprite.length];
 
     public Screen(StaticObjects[][] map, ArrayList<Textures> textures, int screenWidth, int screenHeight) {
         this.map = map;
         this.textures = textures;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-    }
 
+        ZBuffer = new double[screenWidth];
+
+        mapWithoutDoor = new StaticObjects[map.length][map[0].length];
+        doorPositions = new ArrayList<>();
+
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (map[i][j] instanceof Door) {
+                    mapWithoutDoor[i][j] = null;
+                    doorPositions.add(i);
+                    doorPositions.add(j);
+                } else {
+                    mapWithoutDoor[i][j] = map[i][j];
+                }
+            }
+        }
+    }
     public void update(Player player, int[] pixels) {
 
         for (int y = 0; y < screenHeight; y++) {
@@ -113,7 +135,7 @@ public class Screen {
                     wallSide = 1;
                 }
 
-                if (map[mapX][mapY] != null) {
+                if (mapWithoutDoor[mapX][mapY] != null) {
                     rayHit = true;
                 }
             }
@@ -142,11 +164,9 @@ public class Screen {
 
             int texNum = -1;
 
-            if (map[mapX][mapY] != null) {
-                if (map[mapX][mapY] instanceof Wall) {
+            if (mapWithoutDoor[mapX][mapY] != null) {
+                if (mapWithoutDoor[mapX][mapY] instanceof Wall) {
                     texNum = 0;
-                } else if (map[mapX][mapY] instanceof Door) {
-                    texNum = 1;
                 }
             }
 
@@ -180,6 +200,69 @@ public class Screen {
                 }
 
                 pixels[x + y * screenWidth] = color;
+            }
+
+            ZBuffer[x] = rayLength; //perpendicular distance is used
+        }
+
+        for (int i = 0; i < doorPositions.size(); i+=2) {
+
+            double spriteX = 0, spriteY = 0;
+
+            if (map[doorPositions.get(i) - 1][doorPositions.get(i+1)] != null && map[doorPositions.get(i) + 1][doorPositions.get(i+1)] != null) {
+                spriteX = doorPositions.get(i) + 0.5 - player.getPosX();
+                spriteY = doorPositions.get(i+1) + 1 - player.getPosY();
+            }
+            if (map[doorPositions.get(i)][doorPositions.get(i+1) - 1] != null && map[doorPositions.get(i)][doorPositions.get(i+1) + 1] != null) {
+                spriteX = doorPositions.get(i) + 1 - player.getPosX();
+                spriteY = doorPositions.get(i+1) + 0.5 - player.getPosY();
+            }
+
+            double invDet = 1 / (player.getPlaneX() * player.getDirY() - player.getDirX() * player.getPlaneY());
+
+            double transformX = invDet * (player.getDirY() * spriteX - player.getDirX() * spriteY);
+            double transformY = invDet * (-player.getPlaneY() * spriteX + player.getPlaneX() * spriteY);
+
+            int spriteScreenX = (int) ((screenWidth/2) * (1 + transformX/transformY));
+            int spriteHeight = Math.abs((int) (screenHeight / transformY));
+
+            int drawStartY = -spriteHeight / 2 + screenHeight / 2;
+            int drawEndY = spriteHeight / 2 + screenHeight / 2;
+
+            if (drawStartY < 0) {
+                drawStartY = 0;
+            }
+            if (drawEndY >= screenHeight) {
+                drawEndY = screenHeight - 1;
+            }
+
+            int spriteWidth = Math.abs((int) (screenWidth / transformY));
+
+            int drawStartX = -spriteWidth / 2 + spriteScreenX;
+            int drawEndX = spriteWidth / 2 + spriteScreenX;
+
+            if (drawStartX < 0) {
+                drawStartX = 0;
+            }
+            if (drawEndX >= screenWidth) {
+                drawEndX = screenWidth - 1;
+            }
+
+            for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
+                int textureX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * textures.get(1).getSIZE() / spriteWidth) / 256;
+                int doorProgress = ((Door) map[doorPositions.get(i)][doorPositions.get(i+1)]).getDoorProgress();
+                if (transformY > 0 && stripe > 0 && stripe < screenWidth && transformY < ZBuffer[stripe]) {
+                    for (int y = drawStartY; y < drawEndY && y < drawEndY / doorProgress; y++) {
+                        int d = (y) * 256 - screenHeight * 128 + spriteHeight * 128;
+                        int textureY = ((d * textures.get(1).getSIZE()) / spriteHeight) / 256;
+                        int color = 0;
+                        textureY += doorProgress*(2.5);
+                        try {
+                            color = textures.get(1).getPixels()[textureX + (textureY * textures.get(1).getSIZE())];
+                        } catch (ArrayIndexOutOfBoundsException ignored) {}
+                        pixels[stripe + y * screenWidth] = color;
+                    }
+                }
             }
         }
     }

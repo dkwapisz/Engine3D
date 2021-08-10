@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 public class Door extends StaticObjects {
 
-    private int doorProgress; // 0 -> fully closed, 100 -> fully opened
+    private int doorProgress = 1; // 1 -> fully closed, 100 -> fully opened
     private boolean openStarted;
     private boolean closeStarted;
     private boolean opened;
@@ -38,8 +38,9 @@ public class Door extends StaticObjects {
                 @Override
                 public void run() {
                     opened = false;
-                    if (doorProgress == 0) {
+                    if (doorProgress == 2) {
                         openStarted = false;
+                        closeStarted = false;
                         this.cancel();
                     }
                     doorProgress--;
@@ -51,6 +52,9 @@ public class Door extends StaticObjects {
         }
     }
 
+    public boolean isMoving() {
+        return (this.isCloseStarted() || this.isOpenStarted() || this.isOpened());
+    }
 
     public int getDoorProgress() {
         return doorProgress;
