@@ -207,21 +207,27 @@ public class Screen {
 
         for (int i = 0; i < doorPositions.size(); i+=2) {
 
-            double spriteX = 0, spriteY = 0;
+            double spriteX = 0, spriteY = 0, invDet = 0, transformX = 0, transformY = 0;
 
             if (map[doorPositions.get(i) - 1][doorPositions.get(i+1)] != null && map[doorPositions.get(i) + 1][doorPositions.get(i+1)] != null) {
                 spriteX = doorPositions.get(i) + 0.5 - player.getPosX();
-                spriteY = doorPositions.get(i+1) + 1 - player.getPosY();
+                spriteY = doorPositions.get(i+1) + 0.5 - player.getPosY();
+                //TODO remove sprite rotation
+                invDet = 1 / (player.getPlaneX() * player.getDirY() - player.getDirX() * player.getPlaneY());
+
+                transformX = invDet * (player.getDirY() * spriteX - player.getDirX() * spriteY);
+                transformY = invDet * (-player.getPlaneY() * spriteX + player.getPlaneX() * spriteY);
+
             }
             if (map[doorPositions.get(i)][doorPositions.get(i+1) - 1] != null && map[doorPositions.get(i)][doorPositions.get(i+1) + 1] != null) {
-                spriteX = doorPositions.get(i) + 1 - player.getPosX();
+                spriteX = doorPositions.get(i) + 0.5 - player.getPosX();
                 spriteY = doorPositions.get(i+1) + 0.5 - player.getPosY();
+                //TODO remove sprite rotation
+                invDet = 1 / (player.getPlaneX() * player.getDirY() - player.getDirX() * player.getPlaneY());
+
+                transformX = invDet * (player.getDirY() * spriteX - player.getDirX() * spriteY);
+                transformY = invDet * (-player.getPlaneY() * spriteX + player.getPlaneX() * spriteY);
             }
-
-            double invDet = 1 / (player.getPlaneX() * player.getDirY() - player.getDirX() * player.getPlaneY());
-
-            double transformX = invDet * (player.getDirY() * spriteX - player.getDirX() * spriteY);
-            double transformY = invDet * (-player.getPlaneY() * spriteX + player.getPlaneX() * spriteY);
 
             int spriteScreenX = (int) ((screenWidth/2) * (1 + transformX/transformY));
             int spriteHeight = Math.abs((int) (screenHeight / transformY));
@@ -248,11 +254,22 @@ public class Screen {
                 drawEndX = screenWidth - 1;
             }
 
+            if (map[doorPositions.get(i)][doorPositions.get(i+1)] instanceof Door && ((Door) map[doorPositions.get(i)][doorPositions.get(i+1)]).isMoving()) {
+                double tempDrawEnd = spriteHeight / 2 + screenHeight / 2;
+                double doorPercent = ((double) ((Door) map[doorPositions.get(i)][doorPositions.get(i + 1)]).getDoorProgress()) / 100;
+                tempDrawEnd -= (double) spriteHeight * doorPercent;
+                drawEndY = (int) tempDrawEnd;
+
+                if (drawEndY >= screenHeight) {
+                    drawEndY = screenHeight - 1;
+                }
+            }
+
             for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
                 int textureX = (int) (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * textures.get(1).getSIZE() / spriteWidth) / 256;
                 int doorProgress = ((Door) map[doorPositions.get(i)][doorPositions.get(i+1)]).getDoorProgress();
                 if (transformY > 0 && stripe > 0 && stripe < screenWidth && transformY < ZBuffer[stripe]) {
-                    for (int y = drawStartY; y < drawEndY && y < drawEndY / doorProgress; y++) {
+                    for (int y = drawStartY; y < drawEndY; y++) {
                         int d = (y) * 256 - screenHeight * 128 + spriteHeight * 128;
                         int textureY = ((d * textures.get(1).getSIZE()) / spriteHeight) / 256;
                         int color = 0;
