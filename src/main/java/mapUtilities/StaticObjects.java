@@ -1,4 +1,4 @@
 package mapUtilities;
 
-public class StaticObjects {
+public abstract class StaticObjects {
 }

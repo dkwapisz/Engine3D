@@ -8,12 +8,14 @@ import javax.imageio.ImageIO;
 public class Textures {
     private int[] pixels;
     private String location;
-    private final int SIZE;
+    private final int SIZEX;
+    private final int SIZEY;
 
-    public Textures(String location, int size) {
+    public Textures(String location, int sizeX, int sizeY) {
         this.location = location;
-        this.SIZE = size;
-        this.pixels = new int[SIZE * SIZE];
+        this.SIZEX = sizeX;
+        this.SIZEY = sizeY;
+        this.pixels = new int[sizeX * sizeY];
         load();
     }
 
@@ -31,13 +33,17 @@ public class Textures {
     public int[] getPixels() {
         return pixels;
     }
-    public int getSIZE() {
-        return SIZE;
+    public int getSIZEX() {
+        return SIZEX;
+    }
+    public int getSIZEY() {
+        return SIZEY;
     }
 
-    public static Textures basicWall = new Textures("src/main/resources/graphics/basicWall.png", 256);
-    public static Textures basicDoor = new Textures("src/main/resources/graphics/basicDoor.png", 256);
+    public static Textures basicWall = new Textures("src/main/resources/graphics/basicWall.png", 256, 256);
+    public static Textures basicDoor = new Textures("src/main/resources/graphics/basicDoor.png", 256, 256);
+    public static Textures buttonWall = new Textures("src/main/resources/graphics/buttonWall.png", 256, 256);
 
-    public static Textures basicFloor = new Textures("src/main/resources/graphics/basicFloor.png", 256);
-    public static Textures basicCeiling = new Textures("src/main/resources/graphics/basicCeiling.png", 256);
+    public static Textures basicFloor = new Textures("src/main/resources/graphics/basicFloor.png", 256, 256);
+    public static Textures basicCeiling = new Textures("src/main/resources/graphics/basicCeiling.png", 256, 256);
 }

@@ -1,6 +1,6 @@
 package dev.player;
 
-import mapUtilities.Door;
+import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 
 import java.awt.*;
@@ -95,9 +95,9 @@ public class Player {
 
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[x].length; y++) {
-                if (map[x][y] instanceof Door) {
+                if (map[x][y] instanceof BasicDoor && !((BasicDoor) map[x][y]).isButtonDoor()) {
                     if ((new Rectangle(playerVecX, playerVecY,1,1)).intersects(new Rectangle(x, y, 1, 1))) {
-                        ((Door) map[x][y]).open();
+                        ((BasicDoor) map[x][y]).open();
                     }
                 }
             }
@@ -105,7 +105,7 @@ public class Player {
     }
 
     private boolean checkIfDoorOpen(int x, int y) {
-        return (map[x][y] instanceof Door && ((Door) map[x][y]).isOpened());
+        return (map[x][y] instanceof BasicDoor && ((BasicDoor) map[x][y]).isOpened());
     }
 
     public double getPosX() {

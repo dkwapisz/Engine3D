@@ -1,6 +1,7 @@
 package dev;
 
-import mapUtilities.Door;
+import mapUtilities.ButtonWall;
+import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
 
@@ -18,6 +19,7 @@ public class MapReading {
         int freeSpace = new Color(255, 255, 255).getRGB();
         int basicWall = new Color(0, 0, 0).getRGB();
         int basicDoor = new Color(0, 0, 255).getRGB();
+        int buttonWall = new Color(0, 200, 255).getRGB();
 
         for (int x = 0; x < mapImage.getWidth(); x++) {
             for (int y = 0; y < mapImage.getHeight(); y++) {
@@ -31,9 +33,11 @@ public class MapReading {
                     map[x][y] = new Wall();
                 }
                 else if (currentPixel == basicDoor) {
-                    map[x][y] = new Door();
+                    map[x][y] = new BasicDoor();
                 }
-
+                else if (currentPixel == buttonWall) {
+                    map[x][y] = new ButtonWall();
+                }
             }
         }
 

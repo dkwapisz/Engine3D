@@ -1,7 +1,8 @@
 package dev;
 
 import dev.player.Player;
-import mapUtilities.Door;
+import mapUtilities.ButtonWall;
+import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
 
@@ -42,8 +43,10 @@ public class View2D extends JPanel {
                     g2d.setColor(Color.WHITE);
                 } else if (map[x][y] instanceof Wall) {
                     g2d.setColor(Color.BLACK);
-                } else if (map[x][y] instanceof Door) {
+                } else if (map[x][y] instanceof BasicDoor) {
                     g2d.setColor(Color.BLUE);
+                } else if (map[x][y] instanceof ButtonWall) {
+                    g2d.setColor(Color.CYAN);
                 }
                 g2d.fill(new Rectangle2D.Double(x * 40, y * 40, 40, 40));
                 g2d.setColor(Color.DARK_GRAY);

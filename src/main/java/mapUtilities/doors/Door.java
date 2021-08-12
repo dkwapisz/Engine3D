@@ -1,14 +1,28 @@
-package mapUtilities;
+package mapUtilities.doors;
+
+import mapUtilities.StaticObjects;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Door extends StaticObjects {
+public abstract class Door extends StaticObjects {
 
     private int doorProgress = 0; // 1 -> fully closed, 100 -> fully opened
     private boolean openStarted;
     private boolean closeStarted;
     private boolean opened;
+    private boolean buttonDoor;
+    private int openingPeriod;
+    private int closingPeriod;
+    private int openTime;
+
+    public Door(int openingPeriod, int closingPeriod, int openTime) {
+        this.openingPeriod = openingPeriod;
+        this.closingPeriod = closingPeriod;
+        this.openTime = openTime;
+
+
+    }
 
     public void open() {
         if (!openStarted) {
@@ -26,7 +40,7 @@ public class Door extends StaticObjects {
                 }
             };
 
-            openingTimer.scheduleAtFixedRate(openDoorTask, 0, 15);
+            openingTimer.scheduleAtFixedRate(openDoorTask, 0, openingPeriod);
             openStarted = true;
         }
     }
@@ -47,7 +61,7 @@ public class Door extends StaticObjects {
                 }
             };
 
-            closingTimer.scheduleAtFixedRate(closeDoorTask, 5000, 15);
+            closingTimer.scheduleAtFixedRate(closeDoorTask, openTime, closingPeriod);
             closeStarted = true;
         }
     }
@@ -59,13 +73,35 @@ public class Door extends StaticObjects {
     public int getDoorProgress() {
         return doorProgress;
     }
+    public void setDoorProgress(int doorProgress) {
+        this.doorProgress = doorProgress;
+    }
+
     public boolean isOpenStarted() {
         return openStarted;
     }
+    public void setOpenStarted(boolean openStarted) {
+        this.openStarted = openStarted;
+    }
+
     public boolean isCloseStarted() {
         return closeStarted;
     }
+    public void setCloseStarted(boolean closeStarted) {
+        this.closeStarted = closeStarted;
+    }
+
     public boolean isOpened() {
         return opened;
+    }
+    public void setOpened(boolean opened) {
+        this.opened = opened;
+    }
+
+    public boolean isButtonDoor() {
+        return buttonDoor;
+    }
+    public void setButtonDoor(boolean buttonDoor) {
+        this.buttonDoor = buttonDoor;
     }
 }

@@ -46,6 +46,7 @@ public class Game extends JFrame implements Runnable {
         textures = new ArrayList<>();
         textures.add(Textures.basicWall);
         textures.add(Textures.basicDoor);
+        textures.add(Textures.buttonWall);
     }
 
     private synchronized void start() {
