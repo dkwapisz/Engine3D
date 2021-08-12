@@ -66,8 +66,6 @@ public class View2D extends JPanel {
             g2d.draw(new Line2D.Double(player.getPosX() * 40, player.getPosY() * 40, calculateRays(67)[i][0]  * 40, calculateRays(67)[i][1] * 40));
         }
 
-
-
     }
 
     private double[][] calculateRays(int rayNumber) {
