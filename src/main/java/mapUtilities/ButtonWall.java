@@ -1,6 +1,6 @@
 package mapUtilities;
 
-public class ButtonWall extends StaticObjects{
+public class ButtonWall extends StaticObjects {
 
 
 

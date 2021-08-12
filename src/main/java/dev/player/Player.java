@@ -1,5 +1,7 @@
 package dev.player;
 
+import dev.Game;
+import mapUtilities.ButtonWall;
 import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 
@@ -13,6 +15,7 @@ public class Player {
     private final Controls controls;
     private final double MOVE_SPEED = 0.04;
     private final double ROTATION_SPEED = 0.045;
+    private int lastMouseMove = MouseInfo.getPointerInfo().getLocation().x;
 
     public Player(double posX, double posY, double dirX, double dirY, double planeX, double planeY, StaticObjects[][] map) {
         this.posX = posX;
@@ -84,12 +87,32 @@ public class Player {
             planeX = planeX * Math.cos(ROTATION_SPEED) - planeY * Math.sin(ROTATION_SPEED);
             planeY = oldPlaneX * Math.sin(ROTATION_SPEED) + planeY * Math.cos(ROTATION_SPEED);
         }
+        //TODO Mouse movement
+//        if (lastMouseMove != controls.ifMouseMoved()) {
+//            if (lastMouseMove < controls.ifMouseMoved()) {
+//                double oldDirX = dirX;
+//                double oldPlaneX = planeX;
+//                dirX = dirX * Math.cos(-ROTATION_SPEED) - dirY * Math.sin(-ROTATION_SPEED);
+//                dirY = oldDirX * Math.sin(-ROTATION_SPEED) + dirY * Math.cos(-ROTATION_SPEED);
+//                planeX = planeX * Math.cos(-ROTATION_SPEED) - planeY * Math.sin(-ROTATION_SPEED);
+//                planeY = oldPlaneX * Math.sin(-ROTATION_SPEED) + planeY * Math.cos(-ROTATION_SPEED);
+//            }
+//            if (lastMouseMove > controls.ifMouseMoved()) {
+//                double oldDirX = dirX;
+//                double oldPlaneX = planeX;
+//                dirX = dirX * Math.cos(ROTATION_SPEED) - dirY * Math.sin(ROTATION_SPEED);
+//                dirY = oldDirX * Math.sin(ROTATION_SPEED) + dirY * Math.cos(ROTATION_SPEED);
+//                planeX = planeX * Math.cos(ROTATION_SPEED) - planeY * Math.sin(ROTATION_SPEED);
+//                planeY = oldPlaneX * Math.sin(ROTATION_SPEED) + planeY * Math.cos(ROTATION_SPEED);
+//            }
+//        }
+
         if (controls.isOpenDoor()) {
-            openDoor();
+            useAction();
         }
     }
 
-    private void openDoor() {
+    private void useAction() {
         int playerVecX = (int) (posX + dirX);
         int playerVecY = (int) (posY + dirY);
 
@@ -98,6 +121,11 @@ public class Player {
                 if (map[x][y] instanceof BasicDoor && !((BasicDoor) map[x][y]).isButtonDoor()) {
                     if ((new Rectangle(playerVecX, playerVecY,1,1)).intersects(new Rectangle(x, y, 1, 1))) {
                         ((BasicDoor) map[x][y]).open();
+                    }
+                }
+                if (map[x][y] instanceof ButtonWall) {
+                    if ((new Rectangle(playerVecX, playerVecY,1,1)).intersects(new Rectangle(x, y, 1, 1))) {
+                        Game.getButtonGroup().get((ButtonWall) map[x][y]).open();
                     }
                 }
             }

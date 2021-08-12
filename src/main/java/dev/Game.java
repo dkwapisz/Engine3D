@@ -1,7 +1,9 @@
 package dev;
 
 import dev.player.Player;
+import mapUtilities.ButtonWall;
 import mapUtilities.StaticObjects;
+import mapUtilities.doors.BasicDoor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +11,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Game extends JFrame implements Runnable {
 
@@ -16,7 +19,8 @@ public class Game extends JFrame implements Runnable {
     private boolean running;
     private final BufferedImage image;
     private final int[] pixels;
-    private static StaticObjects[][] map;
+    private StaticObjects[][] map;
+    private static Map<ButtonWall, BasicDoor> buttonGroup;
     private ArrayList<Textures> textures;
     private final Player player;
     private final Screen screen;
@@ -24,6 +28,7 @@ public class Game extends JFrame implements Runnable {
 
     public Game() {
         map = MapReading.getMap();
+        buttonGroup = MapReading.getButtonGroups(map);
         mainThread = new Thread(this);
         image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -32,6 +37,7 @@ public class Game extends JFrame implements Runnable {
         screen = new Screen(map, textures, 1280, 720);
         view2D = new View2D(map, player, screen);
         addKeyListener(player.getControls());
+        addMouseMotionListener(player.getControls());
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -95,6 +101,10 @@ public class Game extends JFrame implements Runnable {
             view2D.repaint();
             render();
         }
+    }
+
+    public static Map<ButtonWall, BasicDoor> getButtonGroup() {
+        return buttonGroup;
     }
 
     public static void main(String [] args) {
