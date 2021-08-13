@@ -6,39 +6,28 @@ import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class Screen {
 
-    private StaticObjects[][] map;
-    private StaticObjects[][] mapWithoutDoor;
-    private ArrayList<Integer> doorPositions;
-    private int screenWidth, screenHeight;
-    private ArrayList<Textures> textures;
-    private double[] ZBuffer;
-    double tempPlaneX, tempPlaneY, tempDirX, tempDirY;
-//    double[] sprite = new double[] {4, 2};
-//    int[] spriteOrder = new int[sprite.length];
-//    double[] spriteDistance = new double[sprite.length];
+    private final StaticObjects[][] map;
+    private final StaticObjects[][] mapWithoutDoor;
+    private final int SCREEN_WIDTH;
+    private final int SCREEN_HEIGHT;
+    private final ArrayList<Textures> textures;
 
-    public Screen(StaticObjects[][] map, ArrayList<Textures> textures, int screenWidth, int screenHeight) {
+    public Screen(StaticObjects[][] map, ArrayList<Textures> textures, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.map = map;
         this.textures = textures;
-        this.screenWidth = screenWidth;
-        this.screenHeight = screenHeight;
-
-        ZBuffer = new double[screenWidth];
+        this.SCREEN_WIDTH = SCREEN_WIDTH;
+        this.SCREEN_HEIGHT = SCREEN_HEIGHT;
 
         mapWithoutDoor = new StaticObjects[map.length][map[0].length];
-        doorPositions = new ArrayList<>();
 
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
                 if (map[i][j] instanceof BasicDoor) {
                     mapWithoutDoor[i][j] = null;
-                    doorPositions.add(i);
-                    doorPositions.add(j);
                 } else {
                     mapWithoutDoor[i][j] = map[i][j];
                 }
@@ -48,6 +37,7 @@ public class Screen {
 
     public void update(Player player, int[] pixels) {
         //Fixed order of calls
+        //TODO Ceiling under doors -> when door is opening
         updateFloorAndCeiling(player, pixels);
         //Must call twice, first to remember walls, next to draw door correctly
         updateWalls(player, pixels, false);
@@ -55,32 +45,32 @@ public class Screen {
     }
 
     public void updateFloorAndCeiling(Player player, int[] pixels) {
-        for (int y = 0; y < screenHeight; y++) {
+        for (int y = 0; y < SCREEN_HEIGHT; y++) {
             double rayDirX0 = player.getDirX() - player.getPlaneX();
             double rayDirX1 = player.getDirX() + player.getPlaneX();
             double rayDirY0 = player.getDirY() - player.getPlaneY();
             double rayDirY1 = player.getDirY() + player.getPlaneY();
 
-            int actualY = y - screenHeight / 2;
+            int actualY = y - SCREEN_HEIGHT / 2;
 
-            double cameraPosV = 0.5 * screenHeight;
+            double cameraPosV = 0.5 * SCREEN_HEIGHT;
             double rowDistance = cameraPosV / actualY;
 
-            double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth;
-            double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth;
+            double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / SCREEN_WIDTH;
+            double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / SCREEN_WIDTH;
 
             double floorX = player.getPosX() + rowDistance * rayDirX0;
             double floorY = player.getPosY() + rowDistance * rayDirY0;
             int texX, texY;
 
-            for (int x = 0; x < screenWidth; ++x) {
+            for (int x = 0; x < SCREEN_WIDTH; ++x) {
                 int cellX = (int) floorX;
                 int cellY = (int) floorY;
 
-                int texSize = Textures.basicFloor.getSIZEX();
+                int texSize = Textures.basicFloor.getSIZE();
 
                 int color;
-                if ((x + y * screenWidth) < pixels.length / 2) {
+                if ((x + y * SCREEN_WIDTH) < pixels.length / 2) {
                     // Ceiling
                     texX = (int) (texSize * (floorX - 2 * player.getPosX() - cellX)) & (texSize - 1);
                     texY = (int) (texSize * (floorY - 2 * player.getPosY() - cellY)) & (texSize - 1);
@@ -92,7 +82,7 @@ public class Screen {
                     color = Textures.basicFloor.getPixels()[texSize * texY + texX];
                 }
 
-                pixels[x + y * screenWidth] = color;
+                pixels[x + y * SCREEN_WIDTH] = color;
 
                 floorX += floorStepX;
                 floorY += floorStepY;
@@ -101,8 +91,8 @@ public class Screen {
     }
 
     public void updateWalls(Player player, int[] pixels, boolean withDoor) {
-        for (int x = 0; x < screenWidth; x++) {
-            double cameraX = (2 * x) / ((double) screenWidth) - 1;
+        for (int x = 0; x < SCREEN_WIDTH; x++) {
+            double cameraX = (2 * x) / ((double) SCREEN_WIDTH) - 1;
             double rayDirX = player.getDirX() + player.getPlaneX() * cameraX;
             double rayDirY = player.getDirY() + player.getPlaneY() * cameraX;
 
@@ -170,36 +160,36 @@ public class Screen {
             }
 
             if (rayLength > 0) {
-                wallHeight = Math.abs((int) (screenHeight / rayLength));
+                wallHeight = Math.abs((int) (SCREEN_HEIGHT / rayLength));
             } else {
-                wallHeight = screenHeight;
+                wallHeight = SCREEN_HEIGHT;
             }
             // Its when you dont see whole wall
-            int drawStart = -wallHeight / 2 + screenHeight / 2;
-            int drawEnd = wallHeight / 2 + screenHeight / 2;
+            int drawStart = -wallHeight / 2 + SCREEN_HEIGHT / 2;
+            int drawEnd = wallHeight / 2 + SCREEN_HEIGHT / 2;
             // When you see whole wall
             if (drawStart < 0) {
                 drawStart = 0;
             }
-            if (drawEnd >= screenHeight) {
-                drawEnd = screenHeight - 1;
+            if (drawEnd >= SCREEN_HEIGHT) {
+                drawEnd = SCREEN_HEIGHT - 1;
             }
 
             if (withDoor) {
                 if (map[mapX][mapY] instanceof BasicDoor && ((BasicDoor) map[mapX][mapY]).isMoving()) {
-                    double tempDrawEnd = wallHeight / 2 + screenHeight / 2;
+                    double tempDrawEnd = (double) wallHeight / 2 + (double) SCREEN_HEIGHT / 2;
                     double doorPercent = ((double) ((BasicDoor) map[mapX][mapY]).getDoorProgress()) / 100;
                     tempDrawEnd -= (double) wallHeight * doorPercent;
                     drawEnd = (int) tempDrawEnd;
 
-                    if (drawEnd >= screenHeight) {
-                        drawEnd = screenHeight - 1;
+                    if (drawEnd >= SCREEN_HEIGHT) {
+                        drawEnd = SCREEN_HEIGHT - 1;
                     }
                 }
             }
 
             int texNum;
-
+            //TODO ButtonWall only on one side in Wall
             if (map[mapX][mapY] instanceof Wall) {
                 texNum = 0;
             } else if (map[mapX][mapY] instanceof BasicDoor) {
@@ -222,14 +212,14 @@ public class Screen {
 
             wallHitPos -= Math.floor(wallHitPos);
 
-            int textureX = (int) (wallHitPos * (textures.get(texNum).getSIZEX()));
+            int textureX = (int) (wallHitPos * (textures.get(texNum).getSIZE()));
 
             if ((wallSide == 0 && rayDirX > 0) || (wallSide == 1 && rayDirY < 0)) {
-                textureX = textures.get(texNum).getSIZEX() - textureX - 1;
+                textureX = textures.get(texNum).getSIZE() - textureX - 1;
             }
 
             for (int y = drawStart; y < drawEnd; y++) {
-                int textureY = (((2 * y - screenHeight + wallHeight) << 8) / wallHeight) / 2;
+                int textureY = (((2 * y - SCREEN_HEIGHT + wallHeight) << 8) / wallHeight) / 2;
                 int color = 0;
 
                 if (mapX < map.length - 1 && mapY < map.length - 1 && withDoor) {
@@ -239,13 +229,11 @@ public class Screen {
                 }
 
                 try {
-                    color = textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZEY())];
+                    color = textures.get(texNum).getPixels()[textureX + (textureY * textures.get(texNum).getSIZE())];
                 } catch (ArrayIndexOutOfBoundsException ignored) {}
 
-                pixels[x + y * screenWidth] = color;
+                pixels[x + y * SCREEN_WIDTH] = color;
             }
-
-            ZBuffer[x] = rayLength; //perpendicular distance is used
         }
     }
 }

@@ -24,7 +24,7 @@ public class Game extends JFrame implements Runnable {
     private ArrayList<Textures> textures;
     private final Player player;
     private final Screen screen;
-    private View2D view2D;
+    private final View2D view2D;
 
     public Game() {
         map = MapReading.getMap();

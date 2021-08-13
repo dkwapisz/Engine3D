@@ -1,6 +1,5 @@
 package mapUtilities.doors;
 
-import dev.Game;
 import mapUtilities.ButtonWall;
 import mapUtilities.StaticObjects;
 
@@ -14,15 +13,15 @@ public abstract class Door extends StaticObjects {
     private boolean closeStarted;
     private boolean opened;
     private boolean buttonDoor;
-    private int openingPeriod;
-    private int closingPeriod;
-    private int openTime;
+    private final int OPENING_PERIOD;
+    private final int CLOSING_PERIOD;
+    private final int OPEN_TIME;
     private ButtonWall actualButtonWall;
 
-    public Door(int openingPeriod, int closingPeriod, int openTime) {
-        this.openingPeriod = openingPeriod;
-        this.closingPeriod = closingPeriod;
-        this.openTime = openTime;
+    public Door(int OPENING_PERIOD, int CLOSING_PERIOD, int OPEN_TIME) {
+        this.OPENING_PERIOD = OPENING_PERIOD;
+        this.CLOSING_PERIOD = CLOSING_PERIOD;
+        this.OPEN_TIME = OPEN_TIME;
     }
 
     public void open() {
@@ -40,7 +39,7 @@ public abstract class Door extends StaticObjects {
                     doorProgress++;
                 }
             };
-            openingTimer.scheduleAtFixedRate(openDoorTask, 0, openingPeriod);
+            openingTimer.scheduleAtFixedRate(openDoorTask, 0, OPENING_PERIOD);
             openStarted = true;
         }
     }
@@ -62,7 +61,7 @@ public abstract class Door extends StaticObjects {
                 }
             };
 
-            closingTimer.scheduleAtFixedRate(closeDoorTask, openTime, closingPeriod);
+            closingTimer.scheduleAtFixedRate(closeDoorTask, OPEN_TIME, CLOSING_PERIOD);
             closeStarted = true;
         }
     }

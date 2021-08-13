@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class MapReading {
 
-    private static ArrayList<Integer> colorGroups = new ArrayList<>();
+    private static final ArrayList<Integer> colorGroups = new ArrayList<>();
 
     public static StaticObjects[][] getMap() {
         BufferedImage mapImage = loadImage("src/main/resources/maps/map0.png");

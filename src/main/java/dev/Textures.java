@@ -8,14 +8,12 @@ import javax.imageio.ImageIO;
 public class Textures {
     private int[] pixels;
     private String location;
-    private final int SIZEX;
-    private final int SIZEY;
+    private final int SIZE;
 
-    public Textures(String location, int sizeX, int sizeY) {
+    public Textures(String location, int SIZE) {
         this.location = location;
-        this.SIZEX = sizeX;
-        this.SIZEY = sizeY;
-        this.pixels = new int[sizeX * sizeY];
+        this.SIZE = SIZE;
+        this.pixels = new int[SIZE * SIZE];
         load();
     }
 
@@ -33,18 +31,15 @@ public class Textures {
     public int[] getPixels() {
         return pixels;
     }
-    public int getSIZEX() {
-        return SIZEX;
-    }
-    public int getSIZEY() {
-        return SIZEY;
+    public int getSIZE() {
+        return SIZE;
     }
 
-    public static Textures basicWall = new Textures("src/main/resources/graphics/basicWall.png", 256, 256);
-    public static Textures basicDoor = new Textures("src/main/resources/graphics/basicDoor.png", 256, 256);
-    public static Textures buttonWall = new Textures("src/main/resources/graphics/buttonWall.png", 256, 256);
-    public static Textures buttonWallActivated = new Textures("src/main/resources/graphics/buttonWallActivated.png", 256, 256);
+    public static Textures basicWall = new Textures("src/main/resources/graphics/basicWall.png", 256);
+    public static Textures basicDoor = new Textures("src/main/resources/graphics/basicDoor.png", 256);
+    public static Textures buttonWall = new Textures("src/main/resources/graphics/buttonWall.png", 256);
+    public static Textures buttonWallActivated = new Textures("src/main/resources/graphics/buttonWallActivated.png", 256);
 
-    public static Textures basicFloor = new Textures("src/main/resources/graphics/basicFloor.png", 256, 256);
-    public static Textures basicCeiling = new Textures("src/main/resources/graphics/basicCeiling.png", 256, 256);
+    public static Textures basicFloor = new Textures("src/main/resources/graphics/basicFloor.png", 256);
+    public static Textures basicCeiling = new Textures("src/main/resources/graphics/basicCeiling.png", 256);
 }
