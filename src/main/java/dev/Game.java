@@ -25,15 +25,17 @@ public class Game extends JFrame implements Runnable {
     private final Player player;
     private final Screen screen;
     private final View2D view2D;
+    private int mapNumber;
+    private double startPosX;
+    private double startPosY;
 
     public Game() {
-        map = MapReading.getMap();
-        buttonGroup = MapReading.getButtonGroups(map);
+        loadMap();
         mainThread = new Thread(this);
         image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
         loadTextures();
-        player = new Player(4.5, 4.5, 1, 0, 0, -0.66, map);
+        player = new Player(startPosX, startPosY, 1, 0, 0, -0.66, map);
         screen = new Screen(map, textures, 1280, 720);
         view2D = new View2D(map, player, screen);
         addKeyListener(player.getControls());
@@ -54,6 +56,14 @@ public class Game extends JFrame implements Runnable {
         textures.add(Textures.basicDoor);
         textures.add(Textures.buttonWall);
         textures.add(Textures.buttonWallActivated);
+    }
+
+    private void loadMap() {
+        map = MapReading.getMap(mapNumber);
+        buttonGroup = MapReading.getButtonGroups(map, mapNumber);
+        startPosX = MapReading.getStartPosX() + 0.5;
+        startPosY = MapReading.getStartPosY() + 0.5;
+        mapNumber++;
     }
 
     private synchronized void start() {
