@@ -43,6 +43,7 @@ public class Textures {
     public static Textures basicWall = new Textures("src/main/resources/graphics/basicWall.png", 256, 256);
     public static Textures basicDoor = new Textures("src/main/resources/graphics/basicDoor.png", 256, 256);
     public static Textures buttonWall = new Textures("src/main/resources/graphics/buttonWall.png", 256, 256);
+    public static Textures buttonWallActivated = new Textures("src/main/resources/graphics/buttonWallActivated.png", 256, 256);
 
     public static Textures basicFloor = new Textures("src/main/resources/graphics/basicFloor.png", 256, 256);
     public static Textures basicCeiling = new Textures("src/main/resources/graphics/basicCeiling.png", 256, 256);

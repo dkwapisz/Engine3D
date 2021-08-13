@@ -9,6 +9,7 @@ public class Controls implements KeyListener, MouseMotionListener {
 
     private boolean left, right, forward, backward, rotLeft, rotRight, openDoor;
     private int mouseMove = MouseInfo.getPointerInfo().getLocation().x;
+    
 
     @Override
     public void keyPressed(KeyEvent key) {

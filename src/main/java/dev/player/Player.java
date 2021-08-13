@@ -105,6 +105,7 @@ public class Player {
 //                planeX = planeX * Math.cos(ROTATION_SPEED) - planeY * Math.sin(ROTATION_SPEED);
 //                planeY = oldPlaneX * Math.sin(ROTATION_SPEED) + planeY * Math.cos(ROTATION_SPEED);
 //            }
+//            lastMouseMove = controls.ifMouseMoved();
 //        }
 
         if (controls.isOpenDoor()) {
@@ -123,8 +124,10 @@ public class Player {
                         ((BasicDoor) map[x][y]).open();
                     }
                 }
-                if (map[x][y] instanceof ButtonWall) {
+                if (map[x][y] instanceof ButtonWall && !((ButtonWall) map[x][y]).isClicked()) {
                     if ((new Rectangle(playerVecX, playerVecY,1,1)).intersects(new Rectangle(x, y, 1, 1))) {
+                        ((ButtonWall) map[x][y]).setClicked(true);
+                        Game.getButtonGroup().get((ButtonWall) map[x][y]).setActualButtonWall((ButtonWall) map[x][y]);
                         Game.getButtonGroup().get((ButtonWall) map[x][y]).open();
                     }
                 }

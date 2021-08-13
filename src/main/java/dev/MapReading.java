@@ -11,10 +11,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MapReading {
+
+    private static ArrayList<Integer> colorGroups = new ArrayList<>();
 
     public static StaticObjects[][] getMap() {
         BufferedImage mapImage = loadImage("src/main/resources/maps/map0.png");
@@ -48,20 +51,20 @@ public class MapReading {
     }
 
     public static Map<ButtonWall, BasicDoor> getButtonGroups(StaticObjects[][] map) {
-        BufferedImage mapImage = loadImage("src/main/resources/maps/map0ButtonGroup.png");
+        BufferedImage mapGroup = loadImage("src/main/resources/maps/map0ButtonGroup.png");
 
         Map<ButtonWall, BasicDoor> buttonGroup = new HashMap<>();
         BasicDoor tempDoor = null;
         ButtonWall tempButton = null;
-        int groupCounter = 1;
+        int groupCounter = countGroups(mapGroup);
 
         for (int i = 0; i < groupCounter; i++) {
 
-            for (int x = 0; x < mapImage.getWidth(); x++) {
-                for (int y = 0; y < mapImage.getHeight(); y++) {
+            for (int x = 0; x < mapGroup.getWidth(); x++) {
+                for (int y = 0; y < mapGroup.getHeight(); y++) {
 
-                    int currentPixel = mapImage.getRGB(x, y);
-                    int group1 = new Color(255, 0, 0).getRGB();
+                    int currentPixel = mapGroup.getRGB(x, y);
+                    int group1 = colorGroups.get(i);
 
                     if (currentPixel == group1) {
                         if (map[x][y] instanceof Door) {
@@ -69,6 +72,7 @@ public class MapReading {
                             tempDoor.setButtonDoor(true);
                         } else if (map[x][y] instanceof ButtonWall) {
                             tempButton = (ButtonWall) map[x][y];
+                            tempButton.setClicked(false);
                         }
                     }
                 }
@@ -76,6 +80,24 @@ public class MapReading {
             buttonGroup.put(tempButton, tempDoor);
         }
         return buttonGroup;
+    }
+
+    private static int countGroups(BufferedImage mapGroup) {
+        int groupCounter = 0;
+        for (int x = 0; x < mapGroup.getWidth(); x++) {
+            for (int y = 0; y < mapGroup.getHeight(); y++) {
+
+                int currentPixel = mapGroup.getRGB(x, y);
+                int undefined1 = new Color(0,0,0).getRGB();
+                int undefined2 = new Color(255,255,255).getRGB();
+
+                if (currentPixel != undefined1 && currentPixel != undefined2 && !colorGroups.contains(currentPixel)) {
+                    groupCounter++;
+                    colorGroups.add(currentPixel);
+                }
+            }
+        }
+        return groupCounter;
     }
 
     public static BufferedImage loadImage(String path) {

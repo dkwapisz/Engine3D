@@ -204,8 +204,10 @@ public class Screen {
                 texNum = 0;
             } else if (map[mapX][mapY] instanceof BasicDoor) {
                 texNum = 1;
-            } else if (map[mapX][mapY] instanceof ButtonWall) {
+            } else if (map[mapX][mapY] instanceof ButtonWall && !(((ButtonWall) map[mapX][mapY]).isClicked())) {
                 texNum = 2;
+            } else if (map[mapX][mapY] instanceof ButtonWall && (((ButtonWall) map[mapX][mapY]).isClicked())) {
+                texNum = 3;
             } else {
                 texNum = 0;
             }

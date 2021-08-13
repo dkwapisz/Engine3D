@@ -1,5 +1,7 @@
 package mapUtilities.doors;
 
+import dev.Game;
+import mapUtilities.ButtonWall;
 import mapUtilities.StaticObjects;
 
 import java.util.Timer;
@@ -15,13 +17,12 @@ public abstract class Door extends StaticObjects {
     private int openingPeriod;
     private int closingPeriod;
     private int openTime;
+    private ButtonWall actualButtonWall;
 
     public Door(int openingPeriod, int closingPeriod, int openTime) {
         this.openingPeriod = openingPeriod;
         this.closingPeriod = closingPeriod;
         this.openTime = openTime;
-
-
     }
 
     public void open() {
@@ -39,7 +40,6 @@ public abstract class Door extends StaticObjects {
                     doorProgress++;
                 }
             };
-
             openingTimer.scheduleAtFixedRate(openDoorTask, 0, openingPeriod);
             openStarted = true;
         }
@@ -55,6 +55,7 @@ public abstract class Door extends StaticObjects {
                     if (doorProgress == 1) {
                         openStarted = false;
                         closeStarted = false;
+                        actualButtonWall.setClicked(false);
                         this.cancel();
                     }
                     doorProgress--;
@@ -64,6 +65,10 @@ public abstract class Door extends StaticObjects {
             closingTimer.scheduleAtFixedRate(closeDoorTask, openTime, closingPeriod);
             closeStarted = true;
         }
+    }
+
+    public void setActualButtonWall(ButtonWall actualButtonWall) {
+        this.actualButtonWall = actualButtonWall;
     }
 
     public boolean isMoving() {
