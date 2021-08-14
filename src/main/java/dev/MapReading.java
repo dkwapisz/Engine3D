@@ -51,7 +51,8 @@ public class MapReading {
                     map[x][y] = new ButtonWall();
                 }
                 else if (currentPixel == exitFloor) {
-                    map[x][y] = new ExitFloor();
+                    Game.getExitPos()[0] = x;
+                    Game.getExitPos()[1] = y;
                 }
                 else if (currentPixel == startPos) {
                     startPosX = x;

@@ -83,7 +83,7 @@ public class Screen {
                     color = Textures.basicFloor.getPixels()[texSize * texY + texX];
 
                     //TODO ExitFloor
-//                    if (map[cellX][cellY] instanceof ExitFloor) {
+//                    if (cellX == Game.getExitPos()[0] && cellY == Game.getExitPos()[1]) {
 //                        color = Textures.exitFloor.getPixels()[texSize * texY + texX];
 //                    }
                 }
@@ -148,11 +148,11 @@ public class Screen {
                 }
 
                 if (withDoor) {
-                    if (map[mapX][mapY] != null && !(map[mapX][mapY] instanceof ExitFloor)) {
+                    if (map[mapX][mapY] != null) {
                         rayHit = true;
                     }
                 } else {
-                    if (mapWithoutDoor[mapX][mapY] != null && !(map[mapX][mapY] instanceof ExitFloor)) {
+                    if (mapWithoutDoor[mapX][mapY] != null) {
                         rayHit = true;
                     }
                 }

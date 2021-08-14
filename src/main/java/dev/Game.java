@@ -13,6 +13,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 public class Game extends JFrame implements Runnable {
@@ -31,6 +32,7 @@ public class Game extends JFrame implements Runnable {
     private double startPosX;
     private double startPosY;
     private boolean mapLoading;
+    private static int[] exitPos = new int[2];
 
     public Game() {
         mapNumber = 1;
@@ -71,16 +73,13 @@ public class Game extends JFrame implements Runnable {
     }
 
     private void checkExitCollision() {
-        //TODO Exit doesnt work
-        for (int x = 0; x < map.length; x++) {
-            for (int y = 0; y < map[x].length; y++) {
-                if (map[x][y] instanceof ExitFloor && !mapLoading) {
-                    if (new Rectangle2D.Double(player.getPosX(), player.getPosY(), 10, 10).intersects(new Rectangle2D.Double(x, y, 10, 10))) {
-                        mapNumber++;
-                        mapLoading = true;
-                        loadMap();
-                    }
-                }
+        //TODO Exit doesnt work -> map is reloaded but not updated (camera, screen etc)
+        if (!mapLoading) {
+            if (new Rectangle2D.Double(player.getPosX(), player.getPosY(), 10, 10).intersects(new Rectangle2D.Double(exitPos[0], exitPos[1], 10, 10))) {
+                System.out.println('x');
+                mapNumber++;
+                mapLoading = true;
+                loadMap();
             }
         }
     }
@@ -126,7 +125,7 @@ public class Game extends JFrame implements Runnable {
             while (delta >= 1) {
                 screen.update(player, pixels);
                 player.movementUpdate();
-                checkExitCollision();
+                //checkExitCollision();
                 delta--;
             }
             view2D.repaint();
@@ -136,6 +135,9 @@ public class Game extends JFrame implements Runnable {
 
     public static Map<ButtonWall, BasicDoor> getButtonGroup() {
         return buttonGroup;
+    }
+    public static int[] getExitPos() {
+        return exitPos;
     }
 
     public static void main(String [] args) {

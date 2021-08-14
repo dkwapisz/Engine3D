@@ -48,7 +48,7 @@ public class View2D extends JPanel {
                     g2d.setColor(Color.BLUE);
                 } else if (map[x][y] instanceof ButtonWall) {
                     g2d.setColor(Color.CYAN);
-                } else if (map[x][y] instanceof ExitFloor) {
+                } if (x == Game.getExitPos()[0] && y == Game.getExitPos()[1]) {
                     g2d.setColor(Color.YELLOW);
                 }
                 g2d.fill(new Rectangle2D.Double(x * 40, y * 40, 40, 40));
