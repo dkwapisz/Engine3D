@@ -1,6 +1,7 @@
 package dev;
 
 import mapUtilities.ButtonWall;
+import mapUtilities.ExitFloor;
 import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
@@ -23,12 +24,14 @@ public class MapReading {
 
     public static StaticObjects[][] getMap(int mapNumber) {
         BufferedImage mapImage = loadImage("src/main/resources/maps/map" + mapNumber + ".png");
+        mapImage = mapImage.getSubimage(0, 0, mapImage.getWidth(), mapImage.getHeight()/2);
         StaticObjects[][] map = new StaticObjects[mapImage.getWidth()][mapImage.getHeight()];
         int freeSpace = new Color(255, 255, 255).getRGB();
         int basicWall = new Color(0, 0, 0).getRGB();
         int basicDoor = new Color(0, 0, 255).getRGB();
         int buttonWall = new Color(0, 200, 255).getRGB();
-        int startPos = new Color(175, 175, 175).getRGB();
+        int startPos = new Color(255, 50, 50).getRGB();
+        int exitFloor = new Color(255, 255, 0).getRGB();
 
         for (int x = 0; x < mapImage.getWidth(); x++) {
             for (int y = 0; y < mapImage.getHeight(); y++) {
@@ -47,6 +50,9 @@ public class MapReading {
                 else if (currentPixel == buttonWall) {
                     map[x][y] = new ButtonWall();
                 }
+                else if (currentPixel == exitFloor) {
+                    map[x][y] = new ExitFloor();
+                }
                 else if (currentPixel == startPos) {
                     startPosX = x;
                     startPosY = y;
@@ -58,7 +64,8 @@ public class MapReading {
     }
 
     public static Map<ButtonWall, BasicDoor> getButtonGroups(StaticObjects[][] map, int mapNumber) {
-        BufferedImage mapGroup = loadImage("src/main/resources/maps/mapButtonGroup" + mapNumber + ".png");
+        BufferedImage mapGroup = loadImage("src/main/resources/maps/map" + mapNumber + ".png");
+        mapGroup = mapGroup.getSubimage(0, mapGroup.getHeight()/2, mapGroup.getWidth(), mapGroup.getHeight()/2);
 
         Map<ButtonWall, BasicDoor> buttonGroup = new HashMap<>();
         BasicDoor tempDoor = null;

@@ -41,5 +41,7 @@ public class Textures {
     public static Textures buttonWallActivated = new Textures("src/main/resources/graphics/buttonWallActivated.png", 256);
 
     public static Textures basicFloor = new Textures("src/main/resources/graphics/basicFloor.png", 256);
+    public static Textures exitFloor = new Textures("src/main/resources/graphics/exitFloor.png", 256);
+
     public static Textures basicCeiling = new Textures("src/main/resources/graphics/basicCeiling.png", 256);
 }

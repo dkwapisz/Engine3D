@@ -2,6 +2,7 @@ package dev;
 
 import dev.player.Player;
 import mapUtilities.ButtonWall;
+import mapUtilities.ExitFloor;
 import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
@@ -27,7 +28,7 @@ public class View2D extends JPanel {
         view2Dframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         view2Dframe.setResizable(false);
         view2Dframe.add(this);
-        view2Dframe.setSize(617, 640);
+        view2Dframe.setSize(40 * map.length, 40 * map[0].length + 40);
         view2Dframe.setTitle("2D preview");
         view2Dframe.setLocationRelativeTo(null);
         view2Dframe.setVisible(false);
@@ -47,6 +48,8 @@ public class View2D extends JPanel {
                     g2d.setColor(Color.BLUE);
                 } else if (map[x][y] instanceof ButtonWall) {
                     g2d.setColor(Color.CYAN);
+                } else if (map[x][y] instanceof ExitFloor) {
+                    g2d.setColor(Color.YELLOW);
                 }
                 g2d.fill(new Rectangle2D.Double(x * 40, y * 40, 40, 40));
                 g2d.setColor(Color.DARK_GRAY);

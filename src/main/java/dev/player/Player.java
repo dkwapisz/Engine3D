@@ -2,15 +2,18 @@ package dev.player;
 
 import dev.Game;
 import mapUtilities.ButtonWall;
+import mapUtilities.ExitFloor;
 import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 
 public class Player {
 
     private StaticObjects[][] map;
+    private StaticObjects[][] mapWithoutFloor;
     private double posX, posY, dirX, dirY, planeX, planeY;
     private final Controls controls;
     private final double MOVE_SPEED = 0.04;
@@ -26,46 +29,58 @@ public class Player {
         this.planeY = planeY;
         this.map = map;
         controls = new Controls();
+
+        //TODO really bad optimization
+        mapWithoutFloor = new StaticObjects[map.length][map[0].length];
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (map[i][j] instanceof ExitFloor) {
+                    mapWithoutFloor[i][j] = null;
+                } else {
+                    mapWithoutFloor[i][j] = map[i][j];
+                }
+            }
+        }
     }
 
     public void movementUpdate() {
         if (controls.isForward()) {
-            if (map[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == null ||
+            if (mapWithoutFloor[(int) (posX + dirX * MOVE_SPEED)][(int) posY] == null ||
                 checkIfDoorOpen((int) (posX + dirX * MOVE_SPEED), (int) posY)) {
                 posX += dirX * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + dirY * MOVE_SPEED)] == null ||
+            if (mapWithoutFloor[(int) posX][(int) (posY + dirY * MOVE_SPEED)] == null ||
                 checkIfDoorOpen((int) posX, (int) (posY + dirY * MOVE_SPEED))) {
                 posY += dirY * MOVE_SPEED;
             }
         }
         if (controls.isBackward()) {
-            if (map[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == null ||
+            if (mapWithoutFloor[(int) (posX - dirX * MOVE_SPEED)][(int) posY] == null ||
                 checkIfDoorOpen((int) (posX - dirX * MOVE_SPEED), (int) posY)) {
                 posX -= dirX * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY - dirY * MOVE_SPEED)] == null ||
+            if (mapWithoutFloor[(int) posX][(int) (posY - dirY * MOVE_SPEED)] == null ||
                 checkIfDoorOpen((int) posX, (int) (posY - dirY * MOVE_SPEED))) {
                 posY -= dirY * MOVE_SPEED;
             }
         }
         if (controls.isRight()) {
             //TODO Crash when going to corners
-            if (map[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null ||
+            if (mapWithoutFloor[(int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null ||
                 checkIfDoorOpen((int) (posX + (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED), (int) posY)) {
                 posX += (dirX * Math.cos(-Math.PI / 2) - dirY * Math.sin(-Math.PI / 2)) * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == null ||
+            if (mapWithoutFloor[(int) posX][(int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED)] == null ||
                 checkIfDoorOpen((int) posX, (int) (posY + (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED))) {
                 posY += (dirX * Math.sin(-Math.PI / 2) + dirY * Math.cos(-Math.PI / 2)) * MOVE_SPEED;
             }
         }
         if (controls.isLeft()) {
-            if (map[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null ||
+            if (mapWithoutFloor[(int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED)][(int) posY] == null ||
                 checkIfDoorOpen((int) (posX + (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED), (int) posY)) {
                 posX += (dirX * Math.cos(Math.PI / 2) - dirY * Math.sin(Math.PI / 2)) * MOVE_SPEED;
             }
-            if (map[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == null ||
+            if (mapWithoutFloor[(int) posX][(int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED)] == null ||
                 checkIfDoorOpen((int) posX, (int) (posY + (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED))) {
                 posY += (dirX * Math.sin(Math.PI / 2) + dirY * Math.cos(Math.PI / 2)) * MOVE_SPEED;
             }

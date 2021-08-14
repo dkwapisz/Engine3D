@@ -54,7 +54,9 @@ public abstract class Door extends StaticObjects {
                     if (doorProgress == 1) {
                         openStarted = false;
                         closeStarted = false;
-                        actualButtonWall.setClicked(false);
+                        if (actualButtonWall != null) {
+                            actualButtonWall.setClicked(false);
+                        }
                         this.cancel();
                     }
                     doorProgress--;

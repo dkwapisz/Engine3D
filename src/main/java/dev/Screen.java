@@ -2,6 +2,7 @@ package dev;
 
 import dev.player.Player;
 import mapUtilities.ButtonWall;
+import mapUtilities.ExitFloor;
 import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
@@ -80,6 +81,11 @@ public class Screen {
                     texX = (int) (texSize * (floorX - cellX)) & (texSize - 1);
                     texY = (int) (texSize * (floorY - cellY)) & (texSize - 1);
                     color = Textures.basicFloor.getPixels()[texSize * texY + texX];
+
+                    //TODO ExitFloor
+//                    if (map[cellX][cellY] instanceof ExitFloor) {
+//                        color = Textures.exitFloor.getPixels()[texSize * texY + texX];
+//                    }
                 }
 
                 pixels[x + y * SCREEN_WIDTH] = color;
@@ -142,11 +148,11 @@ public class Screen {
                 }
 
                 if (withDoor) {
-                    if (map[mapX][mapY] != null) {
+                    if (map[mapX][mapY] != null && !(map[mapX][mapY] instanceof ExitFloor)) {
                         rayHit = true;
                     }
                 } else {
-                    if (mapWithoutDoor[mapX][mapY] != null) {
+                    if (mapWithoutDoor[mapX][mapY] != null && !(map[mapX][mapY] instanceof ExitFloor)) {
                         rayHit = true;
                     }
                 }
