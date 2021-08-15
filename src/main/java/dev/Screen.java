@@ -6,8 +6,10 @@ import mapUtilities.ExitFloor;
 import mapUtilities.doors.BasicDoor;
 import mapUtilities.StaticObjects;
 import mapUtilities.Wall;
+import mapUtilities.doors.Door;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Screen {
 
@@ -16,6 +18,7 @@ public class Screen {
     private final int SCREEN_WIDTH;
     private final int SCREEN_HEIGHT;
     private final ArrayList<Textures> textures;
+    private final Random random = new Random();
 
     public Screen(StaticObjects[][] map, ArrayList<Textures> textures, int SCREEN_WIDTH, int SCREEN_HEIGHT) {
         this.map = map;
@@ -84,16 +87,19 @@ public class Screen {
                     texX = (int) (texSize * (floorX - 2 * player.getPosX() - cellX)) & (texSize - 1);
                     texY = (int) (texSize * (floorY - 2 * player.getPosY() - cellY)) & (texSize - 1);
                     color = Textures.basicCeiling.getPixels()[texSize * texY + texX];
+                    // TODO Door ceiling
+
                 } else {
                     // Floor
                     texX = (int) (texSize * (floorX - cellX)) & (texSize - 1);
                     texY = (int) (texSize * (floorY - cellY)) & (texSize - 1);
                     color = Textures.basicFloor.getPixels()[texSize * texY + texX];
 
-                    //TODO ExitFloor
-//                    if (cellX == Game.getExitPos()[0] && cellY == Game.getExitPos()[1]) {
-//                        color = Textures.exitFloor.getPixels()[texSize * texY + texX];
-//                    }
+                    // ExitFloor
+                    if (cellX == Game.getExitPos()[0] && cellY == Game.getExitPos()[1]) {
+                        color = Textures.exitFloor.getPixels()[texSize * texY + texX];
+                        color += random.nextInt(1000) * 100;
+                    }
                 }
 
                 pixels[x + y * SCREEN_WIDTH] = color;
