@@ -31,12 +31,11 @@ public class Game extends JFrame implements Runnable {
     private int mapNumber;
     private double startPosX;
     private double startPosY;
-    private boolean mapLoading;
     private static int[] exitPos = new int[2];
+    private boolean mapLoading;
 
     public Game() {
-        mapNumber = 1;
-        loadMap();
+        loadMap(false);
         mainThread = new Thread(this);
         image = new BufferedImage(1280, 720, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -64,23 +63,23 @@ public class Game extends JFrame implements Runnable {
         textures.add(Textures.buttonWallActivated);
     }
 
-    public void loadMap() {
+    public void loadMap(boolean nextMap) {
+        mapNumber++;
         map = MapReading.getMap(mapNumber);
         buttonGroup = MapReading.getButtonGroups(map, mapNumber);
         startPosX = MapReading.getStartPosX() + 0.5;
         startPosY = MapReading.getStartPosY() + 0.5;
-        mapLoading = false;
+
+        if (nextMap) {
+            player.setNextLevelPositions(startPosX, startPosY, map);
+            screen.setNextLevel(map);
+            view2D.setNextLevelView(map, player, screen);
+        }
     }
 
     private void checkExitCollision() {
-        //TODO Exit doesnt work -> map is reloaded but not updated (camera, screen etc)
-        if (!mapLoading) {
-            if (new Rectangle2D.Double(player.getPosX(), player.getPosY(), 10, 10).intersects(new Rectangle2D.Double(exitPos[0], exitPos[1], 10, 10))) {
-                System.out.println('x');
-                mapNumber++;
-                mapLoading = true;
-                loadMap();
-            }
+        if (new Rectangle2D.Double(player.getPosX(), player.getPosY(), 0.5, 0.5).intersects(new Rectangle2D.Double(exitPos[0]+0.5, exitPos[1]+0.5, 1, 1))) {
+            loadMap(true);
         }
     }
 
@@ -125,7 +124,7 @@ public class Game extends JFrame implements Runnable {
             while (delta >= 1) {
                 screen.update(player, pixels);
                 player.movementUpdate();
-                //checkExitCollision();
+                checkExitCollision();
                 delta--;
             }
             view2D.repaint();

@@ -15,9 +15,9 @@ import java.awt.geom.Rectangle2D;
 
 public class View2D extends JPanel {
 
-    private final StaticObjects[][] map;
-    private final Player player;
-    private final Screen screen;
+    private StaticObjects[][] map;
+    private Player player;
+    private Screen screen;
     private static JFrame view2Dframe;
 
     public View2D(StaticObjects[][] map, Player player, Screen screen) {
@@ -28,7 +28,7 @@ public class View2D extends JPanel {
         view2Dframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         view2Dframe.setResizable(false);
         view2Dframe.add(this);
-        view2Dframe.setSize(40 * map.length, 40 * map[0].length + 40);
+        view2Dframe.setSize(40 * map.length + 17, 40 * map[0].length + 40);
         view2Dframe.setTitle("2D preview");
         view2Dframe.setLocationRelativeTo(null);
         view2Dframe.setVisible(false);
@@ -152,6 +152,12 @@ public class View2D extends JPanel {
         drawGrid(g);
         drawPlayer(g);
         drawRay(g);
+    }
+
+    public void setNextLevelView(StaticObjects[][] map, Player player, Screen screen) {
+        this.map = map;
+        this.player = player;
+        this.screen = screen;
     }
 
     public static JFrame getView2Dframe() {

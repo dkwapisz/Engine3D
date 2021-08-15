@@ -137,6 +137,16 @@ public class Player {
         }
     }
 
+    public void setNextLevelPositions(double startPosX, double startPosY, StaticObjects[][] map) {
+        this.posX = startPosX;
+        this.posY = startPosY;
+        this.dirX = 1;
+        this.dirY = 0;
+        this.planeX = 0;
+        this.planeY = -0.66;
+        this.map = map;
+    }
+
     private boolean checkIfDoorOpen(int x, int y) {
         return (map[x][y] instanceof BasicDoor && ((BasicDoor) map[x][y]).isOpened());
     }

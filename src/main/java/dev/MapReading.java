@@ -23,7 +23,7 @@ public class MapReading {
     private static int startPosY;
 
     public static StaticObjects[][] getMap(int mapNumber) {
-        BufferedImage mapImage = loadImage("src/main/resources/maps/map" + mapNumber + ".png");
+        BufferedImage mapImage = loadImage("src/main/resources/maps/map" + mapNumber + ".png", mapNumber);
         mapImage = mapImage.getSubimage(0, 0, mapImage.getWidth(), mapImage.getHeight()/2);
         StaticObjects[][] map = new StaticObjects[mapImage.getWidth()][mapImage.getHeight()];
         int freeSpace = new Color(255, 255, 255).getRGB();
@@ -65,7 +65,7 @@ public class MapReading {
     }
 
     public static Map<ButtonWall, BasicDoor> getButtonGroups(StaticObjects[][] map, int mapNumber) {
-        BufferedImage mapGroup = loadImage("src/main/resources/maps/map" + mapNumber + ".png");
+        BufferedImage mapGroup = loadImage("src/main/resources/maps/map" + mapNumber + ".png", mapNumber);
         mapGroup = mapGroup.getSubimage(0, mapGroup.getHeight()/2, mapGroup.getWidth(), mapGroup.getHeight()/2);
 
         Map<ButtonWall, BasicDoor> buttonGroup = new HashMap<>();
@@ -115,12 +115,13 @@ public class MapReading {
         return groupCounter;
     }
 
-    public static BufferedImage loadImage(String path) {
+    public static BufferedImage loadImage(String path, int mapNumber) {
         BufferedImage imageToReturn = null;
         try {
             imageToReturn = ImageIO.read(new FileInputStream(path));
         } catch (IOException e) {
             System.out.println("Error with reading map file");
+            System.out.println("Map" + mapNumber + " doesn't exist");
         }
         return imageToReturn;
     }

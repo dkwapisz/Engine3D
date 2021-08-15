@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class Screen {
 
-    private final StaticObjects[][] map;
-    private final StaticObjects[][] mapWithoutDoor;
+    private StaticObjects[][] map;
+    private StaticObjects[][] mapWithoutDoor;
     private final int SCREEN_WIDTH;
     private final int SCREEN_HEIGHT;
     private final ArrayList<Textures> textures;
@@ -22,7 +22,24 @@ public class Screen {
         this.textures = textures;
         this.SCREEN_WIDTH = SCREEN_WIDTH;
         this.SCREEN_HEIGHT = SCREEN_HEIGHT;
+        setMapWithoutDoor(map);
+    }
 
+    public void update(Player player, int[] pixels) {
+        //Fixed order of calls
+        //TODO Ceiling under doors -> when door is opening
+        updateFloorAndCeiling(player, pixels);
+        //Must call twice, first to remember walls, next to draw door correctly
+        updateWalls(player, pixels, false);
+        updateWalls(player, pixels, true);
+    }
+
+    public void setNextLevel(StaticObjects[][] map) {
+        this.map = map;
+        setMapWithoutDoor(map);
+    }
+
+    private void setMapWithoutDoor(StaticObjects[][] map) {
         mapWithoutDoor = new StaticObjects[map.length][map[0].length];
 
         for (int i = 0; i < map.length; i++) {
@@ -34,15 +51,6 @@ public class Screen {
                 }
             }
         }
-    }
-
-    public void update(Player player, int[] pixels) {
-        //Fixed order of calls
-        //TODO Ceiling under doors -> when door is opening
-        updateFloorAndCeiling(player, pixels);
-        //Must call twice, first to remember walls, next to draw door correctly
-        updateWalls(player, pixels, false);
-        updateWalls(player, pixels, true);
     }
 
     public void updateFloorAndCeiling(Player player, int[] pixels) {
@@ -242,4 +250,6 @@ public class Screen {
             }
         }
     }
+
+
 }
